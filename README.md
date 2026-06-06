@@ -76,3 +76,31 @@ Mascot:
 App icon:
 
 "App icon for a budgeting app called PesoPath. Cute chubby shrew face front-facing, cropped to head and shoulders, centered on warm golden-yellow background (#F5A623). Shrew holds a small ₱ coin. Rounded square composition like an iOS app icon. Flat vector style, clean thick outlines, no gradients, no text. 1024x1024px."
+
+lib/
+│
+├── core/ # Shared utilities, constants, themes
+│ ├── theme/ # App colors (#FFF8E7, #F5A623), styles
+│ ├── errors/ # Failure & Exception classes
+│ └── database/ # SQLite helper open/migration scripts
+│
+├── features/
+│ ├── budget/ # Feature: Core Budget & Tracking
+│ │ ├── domain/
+│ │ │ ├── entities/ # Expense, Income, Budget
+│ │ │ ├── repositories/ # budget_repository.dart (Abstract)
+│ │ │ └── usecases/ # add_expense.dart, get_home_data.dart
+│ │ ├── data/
+│ │ │ ├── datasources/ # budget_local_datasource.dart (SQLite)
+│ │ │ ├── models/ # expense_model.dart, income_model.dart
+│ │ │ └── repositories/ # budget_repository_impl.dart
+│ │ └── presentation/
+│ │ ├── blocs/ # budget_bloc.dart, budget_event.dart, budget_state.dart
+│ │ ├── screens/ # home_screen.dart, add_expense_screen.dart
+│ │ └── widgets/ # progress_bar.dart, category_pill.dart
+│ │
+│ └── mascot/ # Feature: Peso's Reactions & Nudges
+│ ├── domain/ # Logic to determine Peso's mood based on % spent
+│ └── presentation/ # PesoSpeechBubble widget, mascot animations
+│
+└── main.dart # Dependency injection setup & app entry point
