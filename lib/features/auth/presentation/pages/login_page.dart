@@ -61,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 24),
                 PrimaryButton(
-                  text: 'Register',
+                  text: 'Login',
                   isLoading: state is AuthLoading,
                   onPressed: () {
                     context.read<AuthBloc>().add(
