@@ -1,4 +1,9 @@
 import 'package:go_router/go_router.dart';
+import 'package:peso_path/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:peso_path/features/savings/presentation/pages/savings_page.dart';
+import 'package:peso_path/features/settings/presentation/pages/settings_page.dart';
+import 'package:peso_path/features/shell/presentation/pages/shell_page.dart';
+import 'package:peso_path/features/transaction/presentation/pages/transaction_page.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
@@ -25,6 +30,44 @@ class AppRouter {
         builder: (context, state) {
           return const RegisterPage();
         },
+      ),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            ShellPage(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/dashboard',
+                builder: (_, __) => const DashboardPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/transactions',
+                builder: (_, __) => const TransactionPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/savings',
+                builder: (_, __) => const SavingsPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/settings',
+                builder: (_, __) => const SettingsPage(),
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   );

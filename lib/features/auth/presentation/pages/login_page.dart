@@ -40,6 +40,7 @@ class _LoginPageState extends State<LoginPage> {
           listener: (context, state) {
             if (state is AuthAuthenticated) {
               AppSnackbar.showSuccess(context, 'Welcome ${state.username}');
+              context.go('/dashboard');
             }
 
             if (state is AuthFailure) {

@@ -48,6 +48,33 @@ class AppTheme {
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
 
       dividerColor: AppColors.lightBorder,
+
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.lightSurface,
+
+        indicatorColor: AppColors.primary.withValues(alpha: 0.15),
+
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.primary);
+          }
+
+          return const IconThemeData(color: AppColors.lightTextSecondary);
+        }),
+
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppTextStyles.labelMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            );
+          }
+
+          return AppTextStyles.labelMedium.copyWith(
+            color: AppColors.lightTextSecondary,
+          );
+        }),
+      ),
     );
   }
 
@@ -91,7 +118,32 @@ class AppTheme {
       ),
 
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.darkSurface,
 
+        indicatorColor: AppColors.primary.withValues(alpha: 0.20),
+
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.primary);
+          }
+
+          return const IconThemeData(color: AppColors.darkTextSecondary);
+        }),
+
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppTextStyles.labelMedium.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+            );
+          }
+
+          return AppTextStyles.labelMedium.copyWith(
+            color: AppColors.darkTextSecondary,
+          );
+        }),
+      ),
       dividerColor: AppColors.darkBorder,
     );
   }
