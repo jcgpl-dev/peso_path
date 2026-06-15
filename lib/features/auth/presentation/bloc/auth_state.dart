@@ -1,19 +1,32 @@
-abstract class AuthState {}
+import 'package:equatable/equatable.dart';
+
+abstract class AuthState extends Equatable {
+  const AuthState();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class AuthSuccess extends AuthState {}
+class AuthRegistered extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final String username;
 
-  AuthAuthenticated(this.username);
+  const AuthAuthenticated(this.username);
+
+  @override
+  List<Object?> get props => [username];
 }
 
 class AuthFailure extends AuthState {
   final String message;
 
-  AuthFailure(this.message);
+  const AuthFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

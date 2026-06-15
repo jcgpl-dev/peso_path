@@ -444,3 +444,6 @@
 
 
  https://chatgpt.com/share/6a3022cc-7704-83ec-818d-0b9b673c95f7
+ db path:
+
+ C:\Users\gapol\AppData\Local\Google\AndroidStudio2023.1\device-explorer\Pixel 6a API 33\_\data\data\com.jcgpl.peso_path\databases

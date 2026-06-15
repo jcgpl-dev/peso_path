@@ -15,7 +15,6 @@ class DatabaseHelper {
 
   Future<Database> _initDatabase() async {
     final dbPath = await getDatabasesPath();
-
     return openDatabase(
       join(dbPath, 'peso_path.db'),
       version: 1,
