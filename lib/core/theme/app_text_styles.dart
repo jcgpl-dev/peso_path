@@ -19,6 +19,13 @@ class AppTextStyles {
     fontFamily: 'Inter',
   );
 
+  static const headlineLargeDark = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+    color: AppColors.surface,
+    fontFamily: 'Inter',
+  );
+
   static const titleLarge = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:peso_path/core/theme/app_colors.dart';
 
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_text_styles.dart';
@@ -20,6 +21,8 @@ class AuthScaffold extends StatelessWidget {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(),
         body: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -33,7 +36,7 @@ class AuthScaffold extends StatelessWidget {
                   height: 80,
                 ),
                 SizedBox(height: AppSpacing.md),
-                Text('Peso Path', style: AppTextStyles.displayLarge),
+                Text('Welcome Back!', style: AppTextStyles.displayLarge),
 
                 const SizedBox(height: AppSpacing.md),
 

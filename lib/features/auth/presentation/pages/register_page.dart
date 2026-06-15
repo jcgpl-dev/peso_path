@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:peso_path/core/theme/app_spacing.dart';
 import 'package:peso_path/shared/widgets/app_scaffold.dart';
+import 'package:peso_path/shared/widgets/app_snackbar.dart';
+import 'package:peso_path/shared/widgets/app_text_field.dart';
 import 'package:peso_path/shared/widgets/primary_button.dart';
 
 import '../bloc/auth_bloc.dart';
@@ -34,61 +37,71 @@ class _RegisterPageState extends State<RegisterPage> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: AuthScaffold(
         title: 'Create an account',
-        subtitle: 'Join Peso Path and start your fitness journey today!',
+        subtitle:
+            'Join Peso Path and manage your budget with confidence and clarity.!',
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthRegistered) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Account created successfully')),
-              );
+              AppSnackbar.showSuccess(context, 'Account created successfully!');
 
               context.go('/login');
             }
 
             if (state is AuthFailure) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              AppSnackbar.showError(context, state.message);
             }
           },
           builder: (context, state) {
             return Column(
               children: [
-                TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Full Name'),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(labelText: 'Username'),
-                ),
-                const SizedBox(height: 16),
-                TextField(
+                AppTextField(controller: nameController, label: 'Name'),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(controller: usernameController, label: 'Username'),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
                   controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  label: 'Password',
+                  isPassword: true,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   text: 'Register',
                   isLoading: state is AuthLoading,
                   onPressed: () {
+                    final name = nameController.text.trim();
+                    final username = usernameController.text.trim();
+                    final password = passwordController.text.trim();
+
+                    if (name.isEmpty || username.isEmpty || password.isEmpty) {
+                      AppSnackbar.showError(
+                        context,
+                        'All fields are required.',
+                      );
+                      return;
+                    }
+
                     context.read<AuthBloc>().add(
                       RegisterRequested(
-                        name: nameController.text.trim(),
-                        username: usernameController.text.trim(),
-                        password: passwordController.text.trim(),
+                        name: name,
+                        username: username,
+                        password: password,
                       ),
                     );
                   },
                 ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    context.go('/login');
-                  },
-                  child: const Text('Login to existing account'),
+                const SizedBox(height: AppSpacing.md),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Already have an account?"),
+                    TextButton(
+                      onPressed: () {
+                        context.go('/login');
+                      },
+                      child: const Text('Login'),
+                    ),
+                  ],
                 ),
               ],
             );

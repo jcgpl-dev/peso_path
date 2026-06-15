@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:peso_path/core/theme/app_spacing.dart';
 import 'package:peso_path/shared/widgets/app_scaffold.dart';
+import 'package:peso_path/shared/widgets/app_snackbar.dart';
+import 'package:peso_path/shared/widgets/app_text_field.dart';
 import 'package:peso_path/shared/widgets/primary_button.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
@@ -31,35 +34,29 @@ class _LoginPageState extends State<LoginPage> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: AuthScaffold(
         title: 'Welcome back',
-        subtitle: 'Log in to your account and continue your fitness journey!',
+        subtitle:
+            'Log in to your account and manage your budget with confidence and clarity.!',
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Welcome ${state.username}')),
-              );
+              AppSnackbar.showSuccess(context, 'Welcome ${state.username}');
             }
 
             if (state is AuthFailure) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(state.message)));
+              AppSnackbar.showError(context, state.message);
             }
           },
           builder: (context, state) {
             return Column(
               children: [
-                TextField(
-                  controller: usernameController,
-                  decoration: const InputDecoration(labelText: 'Username'),
-                ),
-                const SizedBox(height: 16),
-                TextField(
+                AppTextField(controller: usernameController, label: 'Username'),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
                   controller: passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: 'Password'),
+                  label: 'Password',
+                  isPassword: true,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   text: 'Login',
                   isLoading: state is AuthLoading,
@@ -72,12 +69,19 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                 ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () {
-                    context.go('/register');
-                  },
-                  child: const Text('Create Account'),
+                const SizedBox(height: AppSpacing.md),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account?"),
+                    TextButton(
+                      onPressed: () {
+                        context.go('/register');
+                      },
+                      child: const Text('Register'),
+                    ),
+                  ],
                 ),
               ],
             );

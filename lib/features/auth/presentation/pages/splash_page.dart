@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:peso_path/core/theme/app_colors.dart';
 import 'package:peso_path/core/theme/app_spacing.dart';
 import 'package:peso_path/core/theme/app_text_styles.dart';
 
@@ -25,7 +26,8 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: null,
+      backgroundColor: AppColors.primary,
+
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -36,7 +38,7 @@ class _SplashPageState extends State<SplashPage> {
               height: 80,
             ),
             SizedBox(height: AppSpacing.md),
-            const Text('Peso Path', style: AppTextStyles.headlineLarge),
+            const Text('Peso Path', style: AppTextStyles.headlineLargeDark),
           ],
         ),
       ),
