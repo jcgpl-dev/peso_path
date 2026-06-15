@@ -1,4 +1,4 @@
-package com.example.peso_path
+package com.jcgpl.peso_path
 
 import io.flutter.embedding.android.FlutterActivity
 
