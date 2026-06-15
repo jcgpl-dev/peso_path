@@ -54,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
           builder: (context, state) {
             return Column(
               children: [
-                AppTextField(controller: nameController, label: 'Name'),
+                AppTextField(controller: nameController, label: 'Fullname'),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(controller: usernameController, label: 'Username'),
                 const SizedBox(height: AppSpacing.md),

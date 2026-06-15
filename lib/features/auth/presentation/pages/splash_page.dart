@@ -38,7 +38,14 @@ class _SplashPageState extends State<SplashPage> {
               height: 80,
             ),
             SizedBox(height: AppSpacing.md),
-            const Text('Peso Path', style: AppTextStyles.headlineLargeDark),
+            Text(
+              'Peso Path',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppColors.darkTextPrimary,
+              ),
+            ),
           ],
         ),
       ),

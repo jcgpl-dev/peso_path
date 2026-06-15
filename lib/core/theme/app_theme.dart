@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_colors.dart';
+import 'app_text_styles.dart';
 
 class AppTheme {
   AppTheme._();
@@ -9,13 +10,89 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
 
+      brightness: Brightness.light,
+
       fontFamily: 'Inter',
 
-      scaffoldBackgroundColor: AppColors.background,
+      scaffoldBackgroundColor: AppColors.lightBackground,
 
-      colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.primary,
+        surface: AppColors.lightSurface,
+        onSurface: AppColors.lightTextPrimary,
+        onPrimary: Colors.white,
+        error: AppColors.expense,
+      ),
+
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.displayLarge.copyWith(
+          color: AppColors.lightTextPrimary,
+        ),
+        headlineLarge: AppTextStyles.headlineLarge.copyWith(
+          color: AppColors.lightTextPrimary,
+        ),
+        titleLarge: AppTextStyles.titleLarge.copyWith(
+          color: AppColors.lightTextPrimary,
+        ),
+        bodyLarge: AppTextStyles.bodyLarge.copyWith(
+          color: AppColors.lightTextPrimary,
+        ),
+        bodyMedium: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.lightTextSecondary,
+        ),
+        labelMedium: AppTextStyles.labelMedium.copyWith(
+          color: AppColors.lightTextSecondary,
+        ),
+      ),
 
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
+
+      dividerColor: AppColors.lightBorder,
+    );
+  }
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      useMaterial3: true,
+
+      brightness: Brightness.dark,
+
+      fontFamily: 'Inter',
+
+      scaffoldBackgroundColor: AppColors.darkBackground,
+
+      colorScheme: const ColorScheme.dark(
+        primary: AppColors.primary,
+        surface: AppColors.darkSurface,
+        onSurface: AppColors.darkTextPrimary,
+        onPrimary: Colors.white,
+        error: AppColors.expense,
+      ),
+
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.displayLarge.copyWith(
+          color: AppColors.darkTextPrimary,
+        ),
+        headlineLarge: AppTextStyles.headlineLarge.copyWith(
+          color: AppColors.darkTextPrimary,
+        ),
+        titleLarge: AppTextStyles.titleLarge.copyWith(
+          color: AppColors.darkTextPrimary,
+        ),
+        bodyLarge: AppTextStyles.bodyLarge.copyWith(
+          color: AppColors.darkTextPrimary,
+        ),
+        bodyMedium: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.darkTextSecondary,
+        ),
+        labelMedium: AppTextStyles.labelMedium.copyWith(
+          color: AppColors.darkTextSecondary,
+        ),
+      ),
+
+      appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
+
+      dividerColor: AppColors.darkBorder,
     );
   }
 }
