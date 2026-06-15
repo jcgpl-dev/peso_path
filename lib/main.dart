@@ -13,7 +13,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Peso Path',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const Scaffold(body: Center(child: Text('Hello, World!'))),
+      home: Scaffold(
+        appBar: AppBar(),
+        body: Center(child: Text('Hello, World!')),
+      ),
     );
   }
 }
