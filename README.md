@@ -88,7 +88,7 @@ Available Budget
 
 ### State Management
 
-* Riverpod
+* BLOC
 
 ---
 
