@@ -32,6 +32,19 @@ import 'package:peso_path/features/dashboard/domain/usecases/get_dashboard_summa
 
 import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
+import 'package:peso_path/core/session/current_user.dart';
+
+import 'package:peso_path/features/budget/data/datasources/budget_local_datasource.dart';
+import 'package:peso_path/features/budget/data/repositories/budget_repository_impl.dart';
+
+import 'package:peso_path/features/budget/domain/repositories/budget_repository.dart';
+
+import 'package:peso_path/features/budget/domain/usecases/create_budget_cycle.dart';
+import 'package:peso_path/features/budget/domain/usecases/get_active_budget_cycle.dart';
+import 'package:peso_path/features/budget/domain/usecases/update_budget_cycle.dart';
+
+import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> init() async {
@@ -128,8 +141,8 @@ Future<void> init() async {
   sl.registerFactory(
     () => BudgetBloc(
       createBudgetCycle: sl(),
-      updateBudgetCycle: sl(),
       getActiveBudgetCycle: sl(),
+      currentUser: sl(),
     ),
   );
 }

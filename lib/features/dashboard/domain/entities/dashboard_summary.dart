@@ -1,17 +1,21 @@
-import '../../../transactions/domain/entities/transaction.dart';
+import 'package:peso_path/features/transactions/domain/entities/transaction.dart';
 
 class DashboardSummary {
   const DashboardSummary({
-    required this.monthlyIncome,
-    required this.monthlyExpense,
-    required this.balance,
+    required this.budgetAmount,
+    required this.totalSpent,
+    required this.remainingBudget,
     required this.safeBudget,
     required this.recentTransactions,
   });
 
-  final double monthlyIncome;
-  final double monthlyExpense;
-  final double balance;
+  final double budgetAmount;
+
+  final double totalSpent;
+
+  final double remainingBudget;
+
   final double safeBudget;
+
   final List<Transaction> recentTransactions;
 }

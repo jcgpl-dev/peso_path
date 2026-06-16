@@ -1,6 +1,7 @@
-import '../../../../core/session/current_user.dart';
 import 'package:peso_path/core/database/database_helper.dart';
 
+import '../../../../core/session/current_user.dart';
+import '../../../budget/data/models/budget_cycle_model.dart';
 import '../../../transactions/data/models/transaction_model.dart';
 import '../models/dashboard_summary_model.dart';
 
@@ -11,49 +12,54 @@ class DashboardLocalDataSource {
 
   Future<DashboardSummaryModel> getDashboardSummary() async {
     final db = await DatabaseHelper.instance.database;
+
     final userId = currentUser.requireUserId();
 
-    final now = DateTime.now();
-
-    final firstDay = DateTime(now.year, now.month, 1).toIso8601String();
-
-    final lastDay = DateTime(
-      now.year,
-      now.month + 1,
-      0,
-      23,
-      59,
-      59,
-    ).toIso8601String();
-
-    final monthlyTransactions = await db.query(
-      'transactions',
-      where:
-          'user_id = ? AND transaction_date >= ? AND transaction_date <= ?',
-      whereArgs: [userId, firstDay, lastDay],
+    final cycleResult = await db.query(
+      'budget_cycles',
+      where: 'user_id = ? AND is_active = 1',
+      whereArgs: [userId],
+      limit: 1,
     );
 
-    double income = 0;
-    double expense = 0;
+    // No active budget cycle yet
+    if (cycleResult.isEmpty) {
+      return const DashboardSummaryModel(
+        budgetAmount: 0,
+        totalSpent: 0,
+        remainingBudget: 0,
+        safeBudget: 0,
+        recentTransactions: [],
+      );
+    }
 
-    for (final transaction in monthlyTransactions) {
-      final amount = (transaction['amount'] as num).toDouble();
+    final cycle = BudgetCycleModel.fromMap(cycleResult.first);
 
-      if (transaction['type'] == 'income') {
-        income += amount;
-      } else {
-        expense += amount;
+    // Transactions inside active budget cycle only
+    final transactionMaps = await db.query(
+      'transactions',
+      where: 'user_id = ? AND transaction_date >= ? AND transaction_date <= ?',
+      whereArgs: [userId, cycle.startDate, cycle.endDate],
+    );
+
+    double totalSpent = 0;
+
+    for (final transaction in transactionMaps) {
+      if (transaction['type'] == 'expense') {
+        totalSpent += (transaction['amount'] as num).toDouble();
       }
     }
 
-    final balance = income - expense;
+    final remainingBudget = cycle.budgetAmount - totalSpent;
 
-    final totalDays = DateTime(now.year, now.month + 1, 0).day;
+    final now = DateTime.now();
 
-    final remainingDays = totalDays - now.day + 1;
+    final endDate = DateTime.parse(cycle.endDate);
 
-    final safeBudget = remainingDays > 0 && balance > 0
-        ? balance / remainingDays
+    final remainingDays = endDate.difference(now).inDays + 1;
+
+    final safeBudget = remainingBudget > 0 && remainingDays > 0
+        ? remainingBudget / remainingDays
         : 0.0;
 
     final recentMaps = await db.query(
@@ -69,9 +75,9 @@ class DashboardLocalDataSource {
         .toList();
 
     return DashboardSummaryModel(
-      monthlyIncome: income,
-      monthlyExpense: expense,
-      balance: income - expense,
+      budgetAmount: cycle.budgetAmount,
+      totalSpent: totalSpent,
+      remainingBudget: remainingBudget,
       safeBudget: safeBudget,
       recentTransactions: recentTransactions,
     );

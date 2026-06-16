@@ -1,23 +1,34 @@
+import 'package:equatable/equatable.dart';
+
 import '../../domain/entities/budget_cycle.dart';
 
-abstract class BudgetState {}
+abstract class BudgetState extends Equatable {
+  const BudgetState();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class BudgetInitial extends BudgetState {}
 
 class BudgetLoading extends BudgetState {}
 
-class BudgetLoaded extends BudgetState {
-  final BudgetCycle? cycle;
-
-  BudgetLoaded(this.cycle);
-}
-
 class BudgetCreated extends BudgetState {}
 
-class BudgetUpdated extends BudgetState {}
+class BudgetLoaded extends BudgetState {
+  final BudgetCycle cycle;
 
-class BudgetFailure extends BudgetState {
+  const BudgetLoaded(this.cycle);
+
+  @override
+  List<Object?> get props => [cycle];
+}
+
+class BudgetError extends BudgetState {
   final String message;
 
-  BudgetFailure(this.message);
+  const BudgetError(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

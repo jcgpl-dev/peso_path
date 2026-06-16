@@ -76,9 +76,9 @@ class _DashboardPageState extends State<DashboardPage> {
                       const SizedBox(height: AppSpacing.lg),
 
                       MonthlyOverviewCard(
-                        income: summary.monthlyIncome,
-                        expense: summary.monthlyExpense,
-                        transactions: summary.recentTransactions,
+                        budgetAmount: summary.budgetAmount,
+                        totalSpent: summary.totalSpent,
+                        remainingBudget: summary.remainingBudget,
                       ),
 
                       const SizedBox(height: AppSpacing.lg),

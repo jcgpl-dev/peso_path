@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:peso_path/core/theme/app_spacing.dart';
+import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:peso_path/shared/widgets/app_scaffold.dart';
 import 'package:peso_path/shared/widgets/app_snackbar.dart';
 import 'package:peso_path/shared/widgets/app_text_field.dart';
@@ -37,10 +38,18 @@ class _LoginPageState extends State<LoginPage> {
         subtitle:
             'Log in to your account and manage your budget with confidence and clarity.!',
         child: BlocConsumer<AuthBloc, AuthState>(
-          listener: (context, state) {
+          listener: (context, state) async {
             if (state is AuthAuthenticated) {
               AppSnackbar.showSuccess(context, 'Welcome ${state.username}');
-              context.go('/dashboard');
+              final hasBudget = await context
+                  .read<BudgetBloc>()
+                  .hasActiveBudgetCycle();
+
+              if (hasBudget) {
+                context.go('/dashboard');
+              } else {
+                context.go('/budget-setup');
+              }
             }
 
             if (state is AuthFailure) {

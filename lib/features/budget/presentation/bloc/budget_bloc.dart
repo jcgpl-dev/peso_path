@@ -1,8 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
+
+import '../../../../core/session/current_user.dart';
+
+import '../../domain/entities/budget_cycle.dart';
 
 import '../../domain/usecases/create_budget_cycle.dart';
 import '../../domain/usecases/get_active_budget_cycle.dart';
-import '../../domain/usecases/update_budget_cycle.dart';
 
 import 'budget_event.dart';
 import 'budget_state.dart';
@@ -10,24 +14,22 @@ import 'budget_state.dart';
 class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
   final CreateBudgetCycle createBudgetCycle;
 
-  final UpdateBudgetCycle updateBudgetCycle;
-
   final GetActiveBudgetCycle getActiveBudgetCycle;
+
+  final CurrentUser currentUser;
 
   BudgetBloc({
     required this.createBudgetCycle,
-    required this.updateBudgetCycle,
     required this.getActiveBudgetCycle,
+    required this.currentUser,
   }) : super(BudgetInitial()) {
-    on<LoadActiveBudget>(_onLoadActiveBudget);
+    on<LoadActiveBudgetCycle>(_onLoadActiveBudgetCycle);
 
-    on<CreateBudgetRequested>(_onCreateBudget);
-
-    on<UpdateBudgetRequested>(_onUpdateBudget);
+    on<CreateBudgetCycleRequested>(_onCreateBudgetCycleRequested);
   }
 
-  Future<void> _onLoadActiveBudget(
-    LoadActiveBudget event,
+  Future<void> _onLoadActiveBudgetCycle(
+    LoadActiveBudgetCycle event,
     Emitter<BudgetState> emit,
   ) async {
     emit(BudgetLoading());
@@ -35,39 +37,47 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
     try {
       final cycle = await getActiveBudgetCycle();
 
+      if (cycle == null) {
+        emit(const BudgetError('No active budget cycle'));
+        return;
+      }
+
       emit(BudgetLoaded(cycle));
     } catch (e) {
-      emit(BudgetFailure(e.toString()));
+      emit(BudgetError(e.toString()));
     }
   }
 
-  Future<void> _onCreateBudget(
-    CreateBudgetRequested event,
+  Future<bool> hasActiveBudgetCycle() async {
+    final cycle = await getActiveBudgetCycle();
+
+    return cycle != null;
+  }
+
+  Future<void> _onCreateBudgetCycleRequested(
+    CreateBudgetCycleRequested event,
     Emitter<BudgetState> emit,
   ) async {
+    emit(BudgetLoading());
+
     try {
-      await createBudgetCycle(event.cycle);
+      final cycle = BudgetCycle(
+        id: const Uuid().v4(),
+        userId: currentUser.requireUserId(),
+        budgetAmount: event.budgetAmount,
+        startDate: event.startDate.toIso8601String(),
+        endDate: event.endDate.toIso8601String(),
+        isActive: true,
+        createdAt: DateTime.now().toIso8601String(),
+      );
+
+      await createBudgetCycle(cycle);
 
       emit(BudgetCreated());
 
-      add(LoadActiveBudget());
+      add(LoadActiveBudgetCycle());
     } catch (e) {
-      emit(BudgetFailure(e.toString()));
-    }
-  }
-
-  Future<void> _onUpdateBudget(
-    UpdateBudgetRequested event,
-    Emitter<BudgetState> emit,
-  ) async {
-    try {
-      await updateBudgetCycle(event.cycle);
-
-      emit(BudgetUpdated());
-
-      add(LoadActiveBudget());
-    } catch (e) {
-      emit(BudgetFailure(e.toString()));
+      emit(BudgetError(e.toString()));
     }
   }
 }

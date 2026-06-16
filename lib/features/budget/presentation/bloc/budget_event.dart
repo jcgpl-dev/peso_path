@@ -1,17 +1,25 @@
-import '../../domain/entities/budget_cycle.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class BudgetEvent {}
+abstract class BudgetEvent extends Equatable {
+  const BudgetEvent();
 
-class LoadActiveBudget extends BudgetEvent {}
-
-class CreateBudgetRequested extends BudgetEvent {
-  final BudgetCycle cycle;
-
-  CreateBudgetRequested(this.cycle);
+  @override
+  List<Object?> get props => [];
 }
 
-class UpdateBudgetRequested extends BudgetEvent {
-  final BudgetCycle cycle;
+class LoadActiveBudgetCycle extends BudgetEvent {}
 
-  UpdateBudgetRequested(this.cycle);
+class CreateBudgetCycleRequested extends BudgetEvent {
+  final double budgetAmount;
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const CreateBudgetCycleRequested({
+    required this.budgetAmount,
+    required this.startDate,
+    required this.endDate,
+  });
+
+  @override
+  List<Object?> get props => [budgetAmount, startDate, endDate];
 }

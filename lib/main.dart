@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -33,6 +34,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
 
         BlocProvider<DashboardBloc>(create: (_) => sl<DashboardBloc>()),
+
+        BlocProvider<BudgetBloc>(create: (_) => sl<BudgetBloc>()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

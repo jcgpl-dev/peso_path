@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:peso_path/features/transactions/domain/entities/transaction.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -8,24 +7,23 @@ import '../../../../shared/widgets/app_card.dart';
 class MonthlyOverviewCard extends StatelessWidget {
   const MonthlyOverviewCard({
     super.key,
-    required this.income,
-    required this.expense,
-    required List<Transaction> transactions,
+    required this.budgetAmount,
+    required this.totalSpent,
+    required this.remainingBudget,
   });
 
-  final double income;
-  final double expense;
+  final double budgetAmount;
+  final double totalSpent;
+  final double remainingBudget;
 
   @override
   Widget build(BuildContext context) {
-    final balance = income - expense;
-
     return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Monthly Overview',
+            'Budget Overview',
             style: Theme.of(context).textTheme.titleLarge,
           ),
 
@@ -35,25 +33,25 @@ class MonthlyOverviewCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _Item(
-                  title: 'Income',
-                  value: income,
-                  color: AppColors.income,
+                  title: 'Budget',
+                  value: budgetAmount,
+                  color: AppColors.primary,
                 ),
               ),
 
               Expanded(
                 child: _Item(
-                  title: 'Expenses',
-                  value: expense,
+                  title: 'Spent',
+                  value: totalSpent,
                   color: AppColors.expense,
                 ),
               ),
 
               Expanded(
                 child: _Item(
-                  title: 'Balance',
-                  value: balance,
-                  color: AppColors.primary,
+                  title: 'Remaining',
+                  value: remainingBudget,
+                  color: AppColors.income,
                 ),
               ),
             ],
