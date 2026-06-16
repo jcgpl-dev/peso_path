@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/shared/widgets/app_dropdown_field.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/theme/app_spacing.dart';
@@ -31,15 +32,27 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
   String selectedCategory = 'Food';
 
-  final categories = [
+  final expenseCategories = [
     'Food',
     'Transportation',
     'Bills',
     'Shopping',
-    'Salary',
     'Savings',
     'Others',
   ];
+
+  final incomeCategories = [
+    'Allowance',
+    'Salary',
+    'Scholarship',
+    'Gift',
+    'Side Hustle',
+    'Others',
+  ];
+
+  List<String> get categories {
+    return selectedType == 'income' ? incomeCategories : expenseCategories;
+  }
 
   @override
   void dispose() {
@@ -110,9 +123,9 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  DropdownButtonFormField(
-                    initialValue: selectedType,
-                    decoration: const InputDecoration(labelText: 'Type'),
+                  AppDropdownField<String>(
+                    label: 'Type',
+                    value: selectedType,
                     items: const [
                       DropdownMenuItem(value: 'income', child: Text('Income')),
                       DropdownMenuItem(
@@ -123,17 +136,25 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
                     onChanged: (value) {
                       setState(() {
                         selectedType = value!;
+
+                        selectedCategory = selectedType == 'income'
+                            ? incomeCategories.first
+                            : expenseCategories.first;
                       });
                     },
                   ),
 
                   const SizedBox(height: AppSpacing.md),
-
-                  DropdownButtonFormField(
-                    initialValue: selectedCategory,
-                    decoration: const InputDecoration(labelText: 'Category'),
+                  AppDropdownField<String>(
+                    label: 'Category',
+                    value: selectedCategory,
                     items: categories
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                        .map(
+                          (e) => DropdownMenuItem<String>(
+                            value: e,
+                            child: Text(e),
+                          ),
+                        )
                         .toList(),
                     onChanged: (value) {
                       setState(() {
