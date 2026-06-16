@@ -24,6 +24,7 @@ class AppColors {
   static const lightTextSecondary = Color(0xFF64748B);
 
   static const lightBorder = Color(0xFFE2E8F0);
+  static const lightDivider = Color(0xFFCBD5E1);
 
   // Dark Theme
 
@@ -34,4 +35,5 @@ class AppColors {
   static const darkTextSecondary = Color(0xFFCBD5E1);
 
   static const darkBorder = Color(0xFF334155);
+  static const darkDivider = Color(0xFF475569);
 }

@@ -17,16 +17,29 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     return openDatabase(
       join(dbPath, 'peso_path.db'),
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
-          CREATE TABLE users(
-            id TEXT PRIMARY KEY,
-            name TEXT,
-            username TEXT UNIQUE,
-            password TEXT,
-            created_at TEXT
-          )
+        CREATE TABLE IF NOT EXISTS users(
+          id TEXT PRIMARY KEY,
+          name TEXT,
+          username TEXT UNIQUE,
+          password TEXT,
+          created_at TEXT
+        )
+        ''');
+
+        await db.execute('''
+        CREATE TABLE IF NOT EXISTS transactions(
+          id TEXT PRIMARY KEY,
+          title TEXT NOT NULL,
+          amount REAL NOT NULL,
+          type TEXT NOT NULL,
+          category TEXT NOT NULL,
+          note TEXT,
+          transaction_date TEXT NOT NULL,
+          created_at TEXT NOT NULL
+        )
         ''');
       },
     );

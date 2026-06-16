@@ -34,6 +34,7 @@ flutter:
     - lib/assets/icons/
     - lib/assets/fonts/
     - lib/assets/fonts/inter/
+    - lib/assets/fonts/outfit/
   
   fonts:
     - family: Inter
@@ -47,6 +48,10 @@ flutter:
           weight: 600
 
         - asset: lib/assets/fonts/inter/Inter-Bold.ttf
+          weight: 700
+    - family: Outfit
+      fonts:
+        - asset: lib/assets/fonts/outfit/Outfit-Bold.ttf
           weight: 700
   # fonts:
   #   - family: Schyler

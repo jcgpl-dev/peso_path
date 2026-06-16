@@ -16,8 +16,8 @@ void main() {
 
       final user = UserModel(
         id: uuid.v4(),
-        name: 'John Doe',
-        username: 'john',
+        name: 'John Mark',
+        username: 'markjohn',
         password: '123456',
         createdAt: DateTime.now().toIso8601String(),
       );

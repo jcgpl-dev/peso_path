@@ -1,4 +1,12 @@
 import 'package:get_it/get_it.dart';
+import 'package:peso_path/features/transactions/data/datasources/transaction_local_datasource.dart';
+import 'package:peso_path/features/transactions/data/repositories/transaction_repository_impl.dart';
+import 'package:peso_path/features/transactions/domain/repositories/transaction_repository.dart';
+import 'package:peso_path/features/transactions/domain/usecases/add_transaction.dart';
+import 'package:peso_path/features/transactions/domain/usecases/delete_transaction.dart';
+import 'package:peso_path/features/transactions/domain/usecases/get_transactions.dart';
+import 'package:peso_path/features/transactions/domain/usecases/update_transaction.dart';
+import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
 
 import '../features/auth/data/datasources/auth_local_datasource.dart';
 import '../features/auth/data/repositories/auth_repository_impl.dart';
@@ -6,6 +14,14 @@ import '../features/auth/domain/repositories/auth_repository.dart';
 import '../features/auth/domain/usecases/login_user.dart';
 import '../features/auth/domain/usecases/register_user.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
+
+import 'package:peso_path/features/dashboard/data/datasources/dashboard_local_datasource.dart';
+import 'package:peso_path/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+
+import 'package:peso_path/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:peso_path/features/dashboard/domain/usecases/get_dashboard_summary.dart';
+
+import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -32,4 +48,48 @@ Future<void> init() async {
     () =>
         AuthBloc(registerUser: sl<RegisterUser>(), loginUser: sl<LoginUser>()),
   );
+  // Datasource
+  sl.registerLazySingleton(() => TransactionLocalDataSource());
+
+  // Repository
+  sl.registerLazySingleton<TransactionRepository>(
+    () => TransactionRepositoryImpl(sl()),
+  );
+
+  // UseCases
+  sl.registerLazySingleton(() => AddTransaction(sl()));
+
+  sl.registerLazySingleton(() => GetTransactions(sl()));
+
+  sl.registerLazySingleton(() => DeleteTransaction(sl()));
+
+  sl.registerLazySingleton(() => UpdateTransaction(sl()));
+
+  // Bloc
+  sl.registerFactory(
+    () => TransactionBloc(
+      addTransaction: sl(),
+      getTransactions: sl(),
+      updateTransaction: sl(),
+      deleteTransaction: sl(),
+    ),
+  );
+
+  // Dashboard Datasource
+
+  sl.registerLazySingleton(() => DashboardLocalDataSource());
+
+  // Dashboard Repository
+
+  sl.registerLazySingleton<DashboardRepository>(
+    () => DashboardRepositoryImpl(sl()),
+  );
+
+  // Dashboard UseCase
+
+  sl.registerLazySingleton(() => GetDashboardSummary(sl()));
+
+  // Dashboard Bloc
+
+  sl.registerFactory(() => DashboardBloc(getDashboardSummary: sl()));
 }

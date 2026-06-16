@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'core/router/app_router.dart';
@@ -27,8 +28,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<AuthBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
+
+        BlocProvider<DashboardBloc>(create: (_) => sl<DashboardBloc>()),
+      ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: 'Peso Path',

@@ -47,8 +47,11 @@ class AppTheme {
 
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
 
-      dividerColor: AppColors.lightBorder,
-
+      dividerColor: AppColors.lightDivider,
+      dividerTheme: const DividerThemeData(
+        color: AppColors.lightDivider,
+        thickness: 1,
+      ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.lightSurface,
 
@@ -118,6 +121,10 @@ class AppTheme {
       ),
 
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.darkDivider,
+        thickness: 1,
+      ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: AppColors.darkSurface,
 
@@ -144,7 +151,7 @@ class AppTheme {
           );
         }),
       ),
-      dividerColor: AppColors.darkBorder,
+      dividerColor: AppColors.darkDivider,
     );
   }
 }

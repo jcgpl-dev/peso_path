@@ -15,6 +15,13 @@ class AppTextStyles {
     fontFamily: 'Inter',
   );
 
+  static const brandTitle = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    letterSpacing: -0.5,
+    fontFamily: 'Outfit',
+  );
+
   static const titleLarge = TextStyle(
     fontSize: 20,
     fontWeight: FontWeight.w600,
