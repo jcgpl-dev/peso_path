@@ -1,11 +1,17 @@
+import '../../../../core/session/current_user.dart';
 import 'package:peso_path/core/database/database_helper.dart';
 
 import '../../../transactions/data/models/transaction_model.dart';
 import '../models/dashboard_summary_model.dart';
 
 class DashboardLocalDataSource {
+  final CurrentUser currentUser;
+
+  DashboardLocalDataSource(this.currentUser);
+
   Future<DashboardSummaryModel> getDashboardSummary() async {
     final db = await DatabaseHelper.instance.database;
+    final userId = currentUser.requireUserId();
 
     final now = DateTime.now();
 
@@ -22,8 +28,9 @@ class DashboardLocalDataSource {
 
     final monthlyTransactions = await db.query(
       'transactions',
-      where: 'transaction_date >= ? AND transaction_date <= ?',
-      whereArgs: [firstDay, lastDay],
+      where:
+          'user_id = ? AND transaction_date >= ? AND transaction_date <= ?',
+      whereArgs: [userId, firstDay, lastDay],
     );
 
     double income = 0;
@@ -51,6 +58,8 @@ class DashboardLocalDataSource {
 
     final recentMaps = await db.query(
       'transactions',
+      where: 'user_id = ?',
+      whereArgs: [userId],
       orderBy: 'transaction_date DESC',
       limit: 5,
     );

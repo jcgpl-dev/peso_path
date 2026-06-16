@@ -10,11 +10,13 @@ class TransactionLocalDataSource {
     await db.insert('transactions', transaction.toMap());
   }
 
-  Future<List<TransactionModel>> getTransactions() async {
+  Future<List<TransactionModel>> getTransactions(String userId) async {
     final db = await dbHelper.database;
 
     final result = await db.query(
       'transactions',
+      where: 'user_id = ?',
+      whereArgs: [userId],
       orderBy: 'transaction_date DESC',
     );
 
@@ -27,14 +29,18 @@ class TransactionLocalDataSource {
     await db.update(
       'transactions',
       transaction.toMap(),
-      where: 'id = ?',
-      whereArgs: [transaction.id],
+      where: 'id = ? AND user_id = ?',
+      whereArgs: [transaction.id, transaction.userId],
     );
   }
 
-  Future<void> deleteTransaction(String id) async {
+  Future<void> deleteTransaction(String id, String userId) async {
     final db = await dbHelper.database;
 
-    await db.delete('transactions', where: 'id = ?', whereArgs: [id]);
+    await db.delete(
+      'transactions',
+      where: 'id = ? AND user_id = ?',
+      whereArgs: [id, userId],
+    );
   }
 }

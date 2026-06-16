@@ -75,6 +75,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
     final transaction = Transaction(
       id: const Uuid().v4(),
+      userId: '',
       title: title,
       amount: amount,
       type: selectedType,

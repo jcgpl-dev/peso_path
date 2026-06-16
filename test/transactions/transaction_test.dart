@@ -13,6 +13,7 @@ void main() {
 
       final transaction = TransactionModel(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
+        userId: '2132132312',
         title: 'Lunch',
         amount: 150.0,
         type: 'expense',
@@ -24,7 +25,7 @@ void main() {
 
       await datasource.addTransaction(transaction);
 
-      final transactions = await datasource.getTransactions();
+      final transactions = await datasource.getTransactions('2324233');
 
       expect(transactions.isNotEmpty, true);
 

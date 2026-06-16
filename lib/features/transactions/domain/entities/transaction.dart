@@ -1,5 +1,6 @@
 class Transaction {
   final String id;
+  final String userId;
   final String title;
   final double amount;
   final String type;
@@ -10,6 +11,7 @@ class Transaction {
 
   const Transaction({
     required this.id,
+    required this.userId,
     required this.title,
     required this.amount,
     required this.type,

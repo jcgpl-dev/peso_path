@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              AppSnackbar.showSuccess(context, 'Welcome ${state.username}');
+              AppSnackbar.showSuccess(context, 'Welcome ${state.user.username}');
               context.go('/dashboard');
             }
 

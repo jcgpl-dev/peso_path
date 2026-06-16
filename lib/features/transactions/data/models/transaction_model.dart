@@ -3,6 +3,7 @@ import '../../domain/entities/transaction.dart';
 class TransactionModel extends Transaction {
   const TransactionModel({
     required super.id,
+    required super.userId,
     required super.title,
     required super.amount,
     required super.type,
@@ -15,6 +16,7 @@ class TransactionModel extends Transaction {
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
     return TransactionModel(
       id: map['id'],
+      userId: map['user_id'],
       title: map['title'],
       amount: map['amount'],
       type: map['type'],
@@ -28,6 +30,7 @@ class TransactionModel extends Transaction {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'user_id': userId,
       'title': title,
       'amount': amount,
       'type': type,

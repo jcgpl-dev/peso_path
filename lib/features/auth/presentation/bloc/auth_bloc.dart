@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/session/current_user.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/user.dart';
@@ -10,8 +11,13 @@ import 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
   final LoginUser loginUser;
+  final CurrentUser currentUser;
 
-  AuthBloc({required this.registerUser, required this.loginUser})
+  AuthBloc({
+    required this.registerUser,
+    required this.loginUser,
+    required this.currentUser,
+  })
     : super(AuthInitial()) {
     on<RegisterRequested>(_onRegisterRequested);
     on<LoginRequested>(_onLoginRequested);
@@ -54,7 +60,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
-      emit(AuthAuthenticated(user.username));
+      currentUser.setUserId(user.id);
+
+      emit(AuthAuthenticated(user));
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }

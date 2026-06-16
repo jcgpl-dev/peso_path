@@ -18,7 +18,7 @@ class DatabaseHelper {
 
     return openDatabase(
       join(dbPath, 'peso_path.db'),
-      version: 2,
+      version: 3,
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE IF NOT EXISTS users(
@@ -33,15 +33,34 @@ class DatabaseHelper {
         await db.execute('''
         CREATE TABLE IF NOT EXISTS transactions(
           id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
           title TEXT NOT NULL,
           amount REAL NOT NULL,
           type TEXT NOT NULL,
           category TEXT NOT NULL,
           note TEXT,
           transaction_date TEXT NOT NULL,
-          created_at TEXT NOT NULL
+          created_at TEXT NOT NULL,
+          FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
         )
         ''');
+
+        await db.execute('''
+        CREATE INDEX IF NOT EXISTS idx_transactions_user_id
+        ON transactions(user_id)
+        ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 3) {
+          await db.execute(
+            "ALTER TABLE transactions ADD COLUMN user_id TEXT NOT NULL DEFAULT ''",
+          );
+          await db.execute('''
+          CREATE INDEX IF NOT EXISTS idx_transactions_user_id
+          ON transactions(user_id)
+          ''');
+          await db.delete('transactions');
+        }
       },
     );
   }

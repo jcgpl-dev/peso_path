@@ -1,3 +1,4 @@
+import '../core/session/current_user.dart';
 import 'package:get_it/get_it.dart';
 import 'package:peso_path/features/transactions/data/datasources/transaction_local_datasource.dart';
 import 'package:peso_path/features/transactions/data/repositories/transaction_repository_impl.dart';
@@ -26,6 +27,8 @@ import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.da
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  sl.registerLazySingleton<CurrentUser>(() => CurrentUser());
+
   // Datasource
 
   sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSource());
@@ -45,15 +48,18 @@ Future<void> init() async {
   // Bloc
 
   sl.registerFactory(
-    () =>
-        AuthBloc(registerUser: sl<RegisterUser>(), loginUser: sl<LoginUser>()),
+    () => AuthBloc(
+      registerUser: sl<RegisterUser>(),
+      loginUser: sl<LoginUser>(),
+      currentUser: sl<CurrentUser>(),
+    ),
   );
   // Datasource
   sl.registerLazySingleton(() => TransactionLocalDataSource());
 
   // Repository
   sl.registerLazySingleton<TransactionRepository>(
-    () => TransactionRepositoryImpl(sl()),
+    () => TransactionRepositoryImpl(sl(), sl()),
   );
 
   // UseCases
@@ -77,7 +83,7 @@ Future<void> init() async {
 
   // Dashboard Datasource
 
-  sl.registerLazySingleton(() => DashboardLocalDataSource());
+  sl.registerLazySingleton(() => DashboardLocalDataSource(sl()));
 
   // Dashboard Repository
 
