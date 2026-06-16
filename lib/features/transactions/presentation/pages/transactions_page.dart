@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:peso_path/features/transactions/presentation/pages/edit_transaction_page.dart';
 import 'package:peso_path/features/transactions/presentation/widgets/empty_transactions.dart';
 
 import '../../../../core/theme/app_spacing.dart';
@@ -76,7 +78,18 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   itemBuilder: (context, index) {
                     final transaction = state.transactions[index];
 
-                    return TransactionCard(transaction: transaction);
+                    return TransactionCard(
+                      transaction: transaction,
+                      onTap: () {
+                        context.push(
+                          '/edit-transaction',
+                          extra: {
+                            'bloc': context.read<TransactionBloc>(),
+                            'transaction': transaction,
+                          },
+                        );
+                      },
+                    );
                   },
                 ),
               );
