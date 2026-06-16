@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:peso_path/features/budget/domain/entities/budget_cycle.dart';
 
 abstract class BudgetEvent extends Equatable {
   const BudgetEvent();
@@ -22,4 +23,21 @@ class CreateBudgetCycleRequested extends BudgetEvent {
 
   @override
   List<Object?> get props => [budgetAmount, startDate, endDate];
+}
+
+class UpdateBudgetCycleRequested extends BudgetEvent {
+  final String id;
+  final double budgetAmount;
+  final DateTime startDate;
+  final DateTime endDate;
+
+  const UpdateBudgetCycleRequested({
+    required this.id,
+    required this.budgetAmount,
+    required this.startDate,
+    required this.endDate,
+  });
+
+  @override
+  List<Object?> get props => [id, budgetAmount, startDate, endDate];
 }

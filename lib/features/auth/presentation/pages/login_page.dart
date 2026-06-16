@@ -40,10 +40,15 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) async {
             if (state is AuthAuthenticated) {
+              if (!context.mounted) return;
+
               AppSnackbar.showSuccess(context, 'Welcome ${state.username}');
+
               final hasBudget = await context
                   .read<BudgetBloc>()
                   .hasActiveBudgetCycle();
+
+              if (!context.mounted) return;
 
               if (hasBudget) {
                 context.go('/dashboard');

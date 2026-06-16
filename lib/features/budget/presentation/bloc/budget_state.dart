@@ -32,3 +32,5 @@ class BudgetError extends BudgetState {
   @override
   List<Object?> get props => [message];
 }
+
+class BudgetUpdated extends BudgetState {}

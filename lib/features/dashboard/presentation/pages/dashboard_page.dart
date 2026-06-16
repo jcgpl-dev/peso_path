@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/features/budget/presentation/widgets/budget_cycle_card.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_state.dart';
 
@@ -71,6 +72,12 @@ class _DashboardPageState extends State<DashboardPage> {
                       SafeBudgetCard(
                         safeBudget: summary.safeBudget,
                         transactions: summary.recentTransactions,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                      BudgetCycleCard(
+                        budgetAmount: summary.budgetAmount,
+                        totalSpent: summary.totalSpent,
+                        remainingBudget: summary.remainingBudget,
                       ),
 
                       const SizedBox(height: AppSpacing.lg),

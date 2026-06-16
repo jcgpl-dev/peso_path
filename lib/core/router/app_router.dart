@@ -1,13 +1,9 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
-import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:peso_path/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:peso_path/features/savings/presentation/pages/savings_page.dart';
 import 'package:peso_path/features/settings/presentation/pages/settings_page.dart';
 import 'package:peso_path/features/shell/presentation/pages/shell_page.dart';
 import 'package:peso_path/features/transactions/presentation/pages/transactions_page.dart';
-import 'package:peso_path/injection/injection.dart';
 import '../../features/budget/presentation/pages/budget_setup_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
@@ -37,10 +33,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/budget-setup',
-        builder: (_, _) => BlocProvider(
-          create: (_) => sl<BudgetBloc>(),
-          child: const BudgetSetupPage(),
-        ),
+        builder: (_, _) => const BudgetSetupPage(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -50,10 +43,7 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/dashboard',
-                builder: (_, _) => BlocProvider(
-                  create: (_) => sl<DashboardBloc>(),
-                  child: const DashboardPage(),
-                ),
+                builder: (_, _) => const DashboardPage(),
               ),
             ],
           ),
