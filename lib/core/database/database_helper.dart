@@ -18,7 +18,7 @@ class DatabaseHelper {
 
     return openDatabase(
       join(dbPath, 'peso_path.db'),
-      version: 3,
+      version: 4,
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE IF NOT EXISTS users(
@@ -49,6 +49,23 @@ class DatabaseHelper {
         CREATE INDEX IF NOT EXISTS idx_transactions_user_id
         ON transactions(user_id)
         ''');
+        await db.execute('''
+        CREATE TABLE IF NOT EXISTS budget_cycles(
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          budget_amount REAL NOT NULL,
+          start_date TEXT NOT NULL,
+          end_date TEXT NOT NULL,
+          is_active INTEGER NOT NULL,
+          created_at TEXT NOT NULL,
+          FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+        ''');
+
+        await db.execute('''
+        CREATE INDEX IF NOT EXISTS idx_budget_cycles_user_id
+        ON budget_cycles(user_id)
+        ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 3) {
@@ -61,6 +78,23 @@ class DatabaseHelper {
           ''');
           await db.delete('transactions');
         }
+        await db.execute('''
+        CREATE TABLE IF NOT EXISTS budget_cycles(
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          budget_amount REAL NOT NULL,
+          start_date TEXT NOT NULL,
+          end_date TEXT NOT NULL,
+          is_active INTEGER NOT NULL,
+          created_at TEXT NOT NULL,
+          FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+        ''');
+
+        await db.execute('''
+        CREATE INDEX IF NOT EXISTS idx_budget_cycles_user_id
+        ON budget_cycles(user_id)
+        ''');
       },
     );
   }

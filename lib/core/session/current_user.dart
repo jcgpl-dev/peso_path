@@ -3,8 +3,10 @@ class CurrentUser {
 
   String? get userId => _userId;
 
-  void setUserId(String id) {
-    _userId = id;
+  bool get isLoggedIn => _userId != null;
+
+  void setUser(String userId) {
+    _userId = userId;
   }
 
   void clear() {
@@ -12,10 +14,10 @@ class CurrentUser {
   }
 
   String requireUserId() {
-    final id = _userId;
-    if (id == null || id.isEmpty) {
-      throw StateError('No authenticated user found.');
+    if (_userId == null) {
+      throw Exception('No logged in user');
     }
-    return id;
+
+    return _userId!;
   }
 }

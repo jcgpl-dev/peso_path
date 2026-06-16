@@ -1,3 +1,11 @@
+import 'package:peso_path/features/budget/data/datasources/budget_local_datasource.dart';
+import 'package:peso_path/features/budget/data/repositories/budget_repository_impl.dart';
+import 'package:peso_path/features/budget/domain/repositories/budget_repository.dart';
+import 'package:peso_path/features/budget/domain/usecases/create_budget_cycle.dart';
+import 'package:peso_path/features/budget/domain/usecases/get_active_budget_cycle.dart';
+import 'package:peso_path/features/budget/domain/usecases/update_budget_cycle.dart';
+import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
+
 import '../core/session/current_user.dart';
 import 'package:get_it/get_it.dart';
 import 'package:peso_path/features/transactions/data/datasources/transaction_local_datasource.dart';
@@ -98,4 +106,30 @@ Future<void> init() async {
   // Dashboard Bloc
 
   sl.registerFactory(() => DashboardBloc(getDashboardSummary: sl()));
+
+  // Budget Datasource
+
+  sl.registerLazySingleton(() => BudgetLocalDataSource(sl<CurrentUser>()));
+
+  // Repository
+
+  sl.registerLazySingleton<BudgetRepository>(() => BudgetRepositoryImpl(sl()));
+
+  // UseCases
+
+  sl.registerLazySingleton(() => CreateBudgetCycle(sl()));
+
+  sl.registerLazySingleton(() => UpdateBudgetCycle(sl()));
+
+  sl.registerLazySingleton(() => GetActiveBudgetCycle(sl()));
+
+  // Bloc
+
+  sl.registerFactory(
+    () => BudgetBloc(
+      createBudgetCycle: sl(),
+      updateBudgetCycle: sl(),
+      getActiveBudgetCycle: sl(),
+    ),
+  );
 }

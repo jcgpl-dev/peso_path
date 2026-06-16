@@ -17,8 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.registerUser,
     required this.loginUser,
     required this.currentUser,
-  })
-    : super(AuthInitial()) {
+  }) : super(AuthInitial()) {
     on<RegisterRequested>(_onRegisterRequested);
     on<LoginRequested>(_onLoginRequested);
   }
@@ -60,9 +59,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         return;
       }
 
-      currentUser.setUserId(user.id);
+      currentUser.setUser(user.id);
 
-      emit(AuthAuthenticated(user));
+      emit(AuthAuthenticated(userId: user.id, username: user.username));
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }
