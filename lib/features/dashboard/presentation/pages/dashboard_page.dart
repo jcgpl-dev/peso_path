@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
+import 'package:peso_path/features/transactions/presentation/bloc/transaction_state.dart';
 
 import '../../../../core/theme/app_spacing.dart';
 
@@ -30,60 +32,70 @@ class _DashboardPageState extends State<DashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<DashboardBloc, DashboardState>(
-      builder: (context, state) {
-        if (state is DashboardLoading) {
-          return const Center(child: CircularProgressIndicator());
+    return BlocListener<TransactionBloc, TransactionState>(
+      listener: (context, state) {
+        if (state is TransactionAdded ||
+            state is TransactionUpdated ||
+            state is TransactionDeleted) {
+          context.read<DashboardBloc>().add(LoadDashboardSummary());
         }
+      },
 
-        if (state is DashboardError) {
-          return Center(child: Text(state.message));
-        }
+      child: BlocBuilder<DashboardBloc, DashboardState>(
+        builder: (context, state) {
+          if (state is DashboardLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (state is DashboardLoaded) {
-          final summary = state.summary;
+          if (state is DashboardError) {
+            return Center(child: Text(state.message));
+          }
 
-          return SafeArea(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                context.read<DashboardBloc>().add(LoadDashboardSummary());
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  children: [
-                    const DashboardHeader(),
+          if (state is DashboardLoaded) {
+            final summary = state.summary;
 
-                    const SizedBox(height: AppSpacing.lg),
+            return SafeArea(
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  context.read<DashboardBloc>().add(LoadDashboardSummary());
+                },
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Column(
+                    children: [
+                      const DashboardHeader(),
 
-                    SafeBudgetCard(
-                      safeBudget: summary.safeBudget,
-                      transactions: summary.recentTransactions,
-                    ),
+                      const SizedBox(height: AppSpacing.lg),
 
-                    const SizedBox(height: AppSpacing.lg),
+                      SafeBudgetCard(
+                        safeBudget: summary.safeBudget,
+                        transactions: summary.recentTransactions,
+                      ),
 
-                    MonthlyOverviewCard(
-                      income: summary.monthlyIncome,
-                      expense: summary.monthlyExpense,
-                      transactions: summary.recentTransactions,
-                    ),
+                      const SizedBox(height: AppSpacing.lg),
 
-                    const SizedBox(height: AppSpacing.lg),
+                      MonthlyOverviewCard(
+                        income: summary.monthlyIncome,
+                        expense: summary.monthlyExpense,
+                        transactions: summary.recentTransactions,
+                      ),
 
-                    RecentTransactionsSection(
-                      transactions: summary.recentTransactions,
-                    ),
-                  ],
+                      const SizedBox(height: AppSpacing.lg),
+
+                      RecentTransactionsSection(
+                        transactions: summary.recentTransactions,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }
+            );
+          }
 
-        return const SizedBox.shrink();
-      },
+          return const SizedBox.shrink();
+        },
+      ),
     );
   }
 }
