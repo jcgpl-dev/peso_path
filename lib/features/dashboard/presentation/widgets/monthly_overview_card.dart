@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -22,9 +23,35 @@ class MonthlyOverviewCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Budget Overview',
-            style: Theme.of(context).textTheme.titleLarge,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Budget Overview',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  context.push('/budget-setup');
+                },
+                child: Builder(
+                  builder: (context) {
+                    final isDarkMode =
+                        Theme.of(context).brightness == Brightness.dark;
+
+                    return Text(
+                      'Edit',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: isDarkMode
+                            ? AppColors.darkLink
+                            : AppColors.lightLink,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(height: AppSpacing.lg),

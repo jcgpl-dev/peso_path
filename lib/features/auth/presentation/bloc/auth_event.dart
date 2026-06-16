@@ -31,3 +31,15 @@ class RegisterRequested extends AuthEvent {
   @override
   List<Object?> get props => [name, username, password];
 }
+
+class LogoutRequested extends AuthEvent {}
+
+class UploadProfilePictureRequested extends AuthEvent {
+  final String userId;
+  final String imagePath;
+
+  const UploadProfilePictureRequested({
+    required this.userId,
+    required this.imagePath,
+  });
+}

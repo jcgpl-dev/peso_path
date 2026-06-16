@@ -7,6 +7,7 @@ class DashboardSummary {
     required this.remainingBudget,
     required this.safeBudget,
     required this.recentTransactions,
+    required this.endDate,
   });
 
   final double budgetAmount;
@@ -18,4 +19,5 @@ class DashboardSummary {
   final double safeBudget;
 
   final List<Transaction> recentTransactions;
+  final DateTime endDate;
 }

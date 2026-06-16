@@ -64,7 +64,11 @@ class _LoginPageState extends State<LoginPage> {
           builder: (context, state) {
             return Column(
               children: [
-                AppTextField(controller: usernameController, label: 'Username'),
+                AppTextField(
+                  controller: usernameController,
+                  label: 'Username',
+                  hintText: 'ex. juan...',
+                ),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: passwordController,

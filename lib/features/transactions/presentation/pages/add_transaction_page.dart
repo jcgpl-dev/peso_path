@@ -28,8 +28,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
   final noteController = TextEditingController();
 
-  String selectedType = 'expense';
-
   String selectedCategory = 'Food';
 
   final expenseCategories = [
@@ -40,19 +38,6 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     'Savings',
     'Others',
   ];
-
-  final incomeCategories = [
-    'Allowance',
-    'Salary',
-    'Scholarship',
-    'Gift',
-    'Side Hustle',
-    'Others',
-  ];
-
-  List<String> get categories {
-    return selectedType == 'income' ? incomeCategories : expenseCategories;
-  }
 
   @override
   void dispose() {
@@ -78,7 +63,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       userId: '',
       title: title,
       amount: amount,
-      type: selectedType,
+      type: 'expense',
       category: selectedCategory,
       note: noteController.text.trim(),
       transactionDate: DateTime.now().toIso8601String(),
@@ -112,44 +97,29 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  AppTextField(controller: titleController, label: 'Title'),
+                  AppTextField(
+                    controller: titleController,
+                    label: 'Title',
+                    hintText: 'e.g., Grocery shopping, Jeepney fare',
+                  ),
 
                   const SizedBox(height: AppSpacing.md),
 
                   AppTextField(
+                    prefixText: '₱ ',
                     controller: amountController,
                     label: 'Amount',
                     keyboardType: TextInputType.number,
+                    hintText: '0.00',
                   ),
 
                   const SizedBox(height: AppSpacing.md),
-
-                  AppDropdownField<String>(
-                    label: 'Type',
-                    value: selectedType,
-                    items: const [
-                      DropdownMenuItem(value: 'income', child: Text('Income')),
-                      DropdownMenuItem(
-                        value: 'expense',
-                        child: Text('Expense'),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        selectedType = value!;
-
-                        selectedCategory = selectedType == 'income'
-                            ? incomeCategories.first
-                            : expenseCategories.first;
-                      });
-                    },
-                  ),
 
                   const SizedBox(height: AppSpacing.md),
                   AppDropdownField<String>(
                     label: 'Category',
                     value: selectedCategory,
-                    items: categories
+                    items: expenseCategories
                         .map(
                           (e) => DropdownMenuItem<String>(
                             value: e,
@@ -166,7 +136,11 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
                   const SizedBox(height: AppSpacing.md),
 
-                  AppTextField(controller: noteController, label: 'Note'),
+                  AppTextField(
+                    controller: noteController,
+                    label: 'Note (Optional)',
+                    hintText: 'Add extra details like shop name or split costs',
+                  ),
 
                   const SizedBox(height: AppSpacing.xl),
 

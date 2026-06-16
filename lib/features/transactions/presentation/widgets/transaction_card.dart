@@ -7,14 +7,58 @@ class TransactionCard extends StatelessWidget {
 
   final Transaction transaction;
 
+  IconData _categoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'food':
+        return Icons.restaurant_rounded;
+
+      case 'transportation':
+        return Icons.directions_bus_rounded;
+
+      case 'bills':
+        return Icons.receipt_long_rounded;
+
+      case 'shopping':
+        return Icons.shopping_bag_rounded;
+
+      case 'savings':
+        return Icons.savings_rounded;
+
+      default:
+        return Icons.more_horiz_rounded;
+    }
+  }
+
+  Color _categoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'food':
+        return Colors.orange;
+
+      case 'transportation':
+        return Colors.blue;
+
+      case 'bills':
+        return Colors.red;
+
+      case 'shopping':
+        return Colors.purple;
+
+      case 'savings':
+        return Colors.green;
+
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isIncome = transaction.type == 'income';
-
     final colorScheme = Theme.of(context).colorScheme;
+    final color = _categoryColor(transaction.category);
+    final icon = _categoryIcon(transaction.category);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.md),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -26,15 +70,10 @@ class TransactionCard extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: isIncome
-                  ? Colors.green.withValues(alpha: 0.12)
-                  : Colors.red.withValues(alpha: 0.12),
+              color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              isIncome ? Icons.arrow_downward : Icons.arrow_upward,
-              color: isIncome ? Colors.green : Colors.red,
-            ),
+            child: Icon(icon, color: color, size: 22),
           ),
 
           const SizedBox(width: AppSpacing.md),
@@ -45,6 +84,8 @@ class TransactionCard extends StatelessWidget {
               children: [
                 Text(
                   transaction.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
 
@@ -52,17 +93,21 @@ class TransactionCard extends StatelessWidget {
 
                 Text(
                   transaction.category,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
           ),
 
+          const SizedBox(width: AppSpacing.sm),
+
           Text(
-            '${isIncome ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
-            style: TextStyle(
+            '-₱${transaction.amount.toStringAsFixed(2)}',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w700,
-              color: isIncome ? Colors.green : Colors.red,
+              color: Colors.red,
             ),
           ),
         ],

@@ -44,7 +44,9 @@ class AppTheme {
           color: AppColors.lightTextSecondary,
         ),
       ),
-
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: AppColors.lightLink),
+      ),
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
 
       dividerColor: AppColors.lightDivider,
@@ -119,7 +121,9 @@ class AppTheme {
           color: AppColors.darkTextSecondary,
         ),
       ),
-
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(foregroundColor: AppColors.darkLink),
+      ),
       appBarTheme: const AppBarTheme(centerTitle: false, elevation: 0),
       dividerTheme: const DividerThemeData(
         color: AppColors.darkDivider,

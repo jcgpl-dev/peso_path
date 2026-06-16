@@ -8,9 +8,54 @@ class TransactionTile extends StatelessWidget {
 
   final Transaction transaction;
 
+  IconData _categoryIcon(String category) {
+    switch (category.toLowerCase()) {
+      case 'food':
+        return Icons.restaurant_rounded;
+
+      case 'transportation':
+        return Icons.directions_bus_rounded;
+
+      case 'bills':
+        return Icons.receipt_long_rounded;
+
+      case 'shopping':
+        return Icons.shopping_bag_rounded;
+
+      case 'savings':
+        return Icons.savings_rounded;
+
+      default:
+        return Icons.more_horiz_rounded;
+    }
+  }
+
+  Color _categoryColor(String category) {
+    switch (category.toLowerCase()) {
+      case 'food':
+        return Colors.orange;
+
+      case 'transportation':
+        return Colors.blue;
+
+      case 'bills':
+        return Colors.red;
+
+      case 'shopping':
+        return Colors.purple;
+
+      case 'savings':
+        return Colors.green;
+
+      default:
+        return Colors.grey;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isIncome = transaction.type == 'income';
+    final color = _categoryColor(transaction.category);
+    final icon = _categoryIcon(transaction.category);
 
     return Row(
       children: [
@@ -18,18 +63,10 @@ class TransactionTile extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: isIncome
-                ? Colors.green.withValues(alpha: 0.12)
-                : Colors.red.withValues(alpha: 0.12),
+            color: color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            isIncome
-                ? Icons.arrow_downward_rounded
-                : Icons.arrow_upward_rounded,
-            color: isIncome ? Colors.green : Colors.red,
-            size: 20,
-          ),
+          child: Icon(icon, color: color, size: 20),
         ),
 
         const SizedBox(width: AppSpacing.md),
@@ -60,10 +97,10 @@ class TransactionTile extends StatelessWidget {
         const SizedBox(width: AppSpacing.sm),
 
         Text(
-          '${isIncome ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
+          '-₱${transaction.amount.toStringAsFixed(2)}',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w700,
-            color: isIncome ? Colors.green : Colors.red,
+            color: Colors.red,
           ),
         ),
       ],

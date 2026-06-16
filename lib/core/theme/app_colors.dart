@@ -26,6 +26,9 @@ class AppColors {
   static const lightBorder = Color(0xFFE2E8F0);
   static const lightDivider = Color(0xFFCBD5E1);
 
+  // Clickable text indicators (Light)
+  static const lightLink = Color(0xFF2563EB);
+
   // Dark Theme
 
   static const darkBackground = Color(0xFF0F172A);
@@ -36,4 +39,7 @@ class AppColors {
 
   static const darkBorder = Color(0xFF334155);
   static const darkDivider = Color(0xFF475569);
+
+  // Clickable text indicators (Dark)
+  static const darkLink = Color(0xFF60A5FA);
 }

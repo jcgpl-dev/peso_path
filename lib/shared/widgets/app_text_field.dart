@@ -7,12 +7,16 @@ class AppTextField extends StatefulWidget {
     required this.label,
     this.isPassword = false,
     this.keyboardType,
+    this.prefixText,
+    this.hintText,
   });
 
   final TextEditingController controller;
   final String label;
   final bool isPassword;
   final TextInputType? keyboardType;
+  final String? prefixText;
+  final String? hintText;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -38,15 +42,15 @@ class _AppTextFieldState extends State<AppTextField> {
       obscureText: _obscureText,
       decoration: InputDecoration(
         labelText: widget.label,
-
+        prefixText: widget.prefixText,
+        hintText: widget.hintText,
+        hintStyle: TextStyle(color: Theme.of(context).hintColor.withAlpha(150)),
         enabledBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: dividerColor),
         ),
-
         focusedBorder: UnderlineInputBorder(
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
-
         suffixIcon: widget.isPassword
             ? IconButton(
                 onPressed: () {

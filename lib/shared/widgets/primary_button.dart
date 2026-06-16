@@ -8,11 +8,13 @@ class PrimaryButton extends StatelessWidget {
     required this.text,
     required this.onPressed,
     this.isLoading = false,
+    this.backgroundColor,
   });
 
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +49,7 @@ class PrimaryButton extends StatelessWidget {
               return colorScheme.primary.withValues(alpha: 0.5);
             }
 
-            return colorScheme.primary;
+            return backgroundColor ?? colorScheme.primary;
           }),
         ),
         child: isLoading

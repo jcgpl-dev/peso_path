@@ -38,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
       child: AuthScaffold(
         title: 'Create an account',
         subtitle:
-            'Join Peso Path and manage your budget with confidence and clarity.!',
+            'Join Peso Path and manage your budget with confidence and clarity.',
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthRegistered) {
@@ -54,9 +54,17 @@ class _RegisterPageState extends State<RegisterPage> {
           builder: (context, state) {
             return Column(
               children: [
-                AppTextField(controller: nameController, label: 'Fullname'),
+                AppTextField(
+                  controller: nameController,
+                  label: 'Fullname',
+                  hintText: 'ex. Juan Dela Cruz',
+                ),
                 const SizedBox(height: AppSpacing.md),
-                AppTextField(controller: usernameController, label: 'Username'),
+                AppTextField(
+                  controller: usernameController,
+                  label: 'Username',
+                  hintText: 'ex. juan...',
+                ),
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: passwordController,

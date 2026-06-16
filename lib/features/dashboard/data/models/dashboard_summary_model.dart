@@ -8,6 +8,7 @@ class DashboardSummaryModel extends DashboardSummary {
     required super.remainingBudget,
     required super.safeBudget,
     required super.recentTransactions,
+    required super.endDate,
   });
 
   factory DashboardSummaryModel.fromData({
@@ -16,6 +17,7 @@ class DashboardSummaryModel extends DashboardSummary {
     required double remainingBudget,
     required double safeBudget,
     required List<Transaction> recentTransactions,
+    required DateTime endDate,
   }) {
     return DashboardSummaryModel(
       budgetAmount: budgetAmount,
@@ -23,6 +25,7 @@ class DashboardSummaryModel extends DashboardSummary {
       remainingBudget: remainingBudget,
       safeBudget: safeBudget,
       recentTransactions: recentTransactions,
+      endDate: endDate,
     );
   }
 }

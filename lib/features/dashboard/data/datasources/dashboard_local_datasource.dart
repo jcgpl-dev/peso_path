@@ -24,12 +24,13 @@ class DashboardLocalDataSource {
 
     // No active budget cycle yet
     if (cycleResult.isEmpty) {
-      return const DashboardSummaryModel(
+      return DashboardSummaryModel(
         budgetAmount: 0,
         totalSpent: 0,
         remainingBudget: 0,
         safeBudget: 0,
         recentTransactions: [],
+        endDate: DateTime.now(),
       );
     }
 
@@ -80,6 +81,7 @@ class DashboardLocalDataSource {
       remainingBudget: remainingBudget,
       safeBudget: safeBudget,
       recentTransactions: recentTransactions,
+      endDate: endDate,
     );
   }
 }

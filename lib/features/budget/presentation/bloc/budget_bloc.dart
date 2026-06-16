@@ -56,7 +56,7 @@ class BudgetBloc extends Bloc<BudgetEvent, BudgetState> {
         ),
       );
 
-      emit(BudgetCreated());
+      emit(BudgetUpdated());
 
       add(LoadActiveBudgetCycle());
     } catch (e) {

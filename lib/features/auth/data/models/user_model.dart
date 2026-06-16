@@ -5,6 +5,7 @@ class UserModel extends User {
     required super.id,
     required super.name,
     required super.username,
+    super.profilePicture,
     required super.password,
     required super.createdAt,
   });
@@ -14,6 +15,7 @@ class UserModel extends User {
       id: map['id'],
       name: map['name'],
       username: map['username'],
+      profilePicture: map['profile_picture'] as String?,
       password: map['password'],
       createdAt: map['created_at'],
     );
@@ -24,6 +26,7 @@ class UserModel extends User {
       'id': id,
       'name': name,
       'username': username,
+      'profile_picture': profilePicture,
       'password': password,
       'created_at': createdAt,
     };

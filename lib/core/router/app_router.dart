@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:peso_path/features/auth/presentation/pages/profile_page.dart';
 import 'package:peso_path/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:peso_path/features/savings/presentation/pages/savings_page.dart';
 import 'package:peso_path/features/settings/presentation/pages/settings_page.dart';
@@ -20,6 +21,10 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfilePage(),
+      ),
+      GoRoute(
         path: '/login',
         builder: (context, state) {
           return const LoginPage();
@@ -35,6 +40,7 @@ class AppRouter {
         path: '/budget-setup',
         builder: (_, _) => const BudgetSetupPage(),
       ),
+
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
             ShellPage(navigationShell: navigationShell),

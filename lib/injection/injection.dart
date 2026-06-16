@@ -1,3 +1,5 @@
+import 'package:peso_path/features/auth/domain/usecases/logout_user.dart';
+import 'package:peso_path/features/auth/domain/usecases/update_profile_pic.dart';
 import 'package:peso_path/features/budget/data/datasources/budget_local_datasource.dart';
 import 'package:peso_path/features/budget/data/repositories/budget_repository_impl.dart';
 import 'package:peso_path/features/budget/domain/repositories/budget_repository.dart';
@@ -26,60 +28,58 @@ import '../features/auth/presentation/bloc/auth_bloc.dart';
 
 import 'package:peso_path/features/dashboard/data/datasources/dashboard_local_datasource.dart';
 import 'package:peso_path/features/dashboard/data/repositories/dashboard_repository_impl.dart';
-
 import 'package:peso_path/features/dashboard/domain/repositories/dashboard_repository.dart';
 import 'package:peso_path/features/dashboard/domain/usecases/get_dashboard_summary.dart';
-
 import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // Session tracking core initialization
   sl.registerLazySingleton<CurrentUser>(() => CurrentUser());
 
-  // Datasource
-
+  // Auth Datasource
   sl.registerLazySingleton<AuthLocalDataSource>(() => AuthLocalDataSource());
 
-  // Repository
-
+  // Auth Repository
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(sl<AuthLocalDataSource>()),
   );
 
-  // Use Cases
-
+  // Auth Use Cases
   sl.registerLazySingleton(() => RegisterUser(sl<AuthRepository>()));
-
   sl.registerLazySingleton(() => LoginUser(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => LogoutUser(sl<AuthRepository>()));
+  sl.registerLazySingleton(
+    () => UpdateProfilePic(sl<AuthRepository>()),
+  ); // Moved up here safely
 
-  // Bloc
-
+  // Auth Bloc
   sl.registerFactory(
     () => AuthBloc(
       registerUser: sl<RegisterUser>(),
       loginUser: sl<LoginUser>(),
+      logoutUser: sl<LogoutUser>(),
+      updateProfilePic: sl<UpdateProfilePic>(), // Injected cleanly
       currentUser: sl<CurrentUser>(),
     ),
   );
-  // Datasource
+
+  // Transaction Datasource
   sl.registerLazySingleton(() => TransactionLocalDataSource());
 
-  // Repository
+  // Transaction Repository
   sl.registerLazySingleton<TransactionRepository>(
     () => TransactionRepositoryImpl(sl(), sl()),
   );
 
-  // UseCases
+  // Transaction UseCases
   sl.registerLazySingleton(() => AddTransaction(sl()));
-
   sl.registerLazySingleton(() => GetTransactions(sl()));
-
   sl.registerLazySingleton(() => DeleteTransaction(sl()));
-
   sl.registerLazySingleton(() => UpdateTransaction(sl()));
 
-  // Bloc
+  // Transaction Bloc
   sl.registerFactory(
     () => TransactionBloc(
       addTransaction: sl(),
@@ -90,41 +90,31 @@ Future<void> init() async {
   );
 
   // Dashboard Datasource
-
   sl.registerLazySingleton(() => DashboardLocalDataSource(sl()));
 
   // Dashboard Repository
-
   sl.registerLazySingleton<DashboardRepository>(
     () => DashboardRepositoryImpl(sl()),
   );
 
   // Dashboard UseCase
-
   sl.registerLazySingleton(() => GetDashboardSummary(sl()));
 
   // Dashboard Bloc
-
   sl.registerFactory(() => DashboardBloc(getDashboardSummary: sl()));
 
   // Budget Datasource
-
   sl.registerLazySingleton(() => BudgetLocalDataSource(sl<CurrentUser>()));
 
-  // Repository
-
+  // Budget Repository
   sl.registerLazySingleton<BudgetRepository>(() => BudgetRepositoryImpl(sl()));
 
-  // UseCases
-
+  // Budget UseCases
   sl.registerLazySingleton(() => CreateBudgetCycle(sl()));
-
   sl.registerLazySingleton(() => UpdateBudgetCycle(sl()));
-
   sl.registerLazySingleton(() => GetActiveBudgetCycle(sl()));
 
-  // Bloc
-
+  // Budget Bloc
   sl.registerFactory(
     () => BudgetBloc(
       createBudgetCycle: sl(),
