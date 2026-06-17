@@ -96,10 +96,11 @@ class _DashboardPageState extends State<DashboardPage> {
                       ),
 
                       const SizedBox(height: AppSpacing.lg),
+
                       SafeBudgetCard(
                         safeBudget: summary.safeBudget,
                         transactions: summary.recentTransactions,
-                        endDate: summary.endDate, //todo
+                        endDate: summary.endDate,
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       MonthlyOverviewCard(

@@ -9,11 +9,12 @@ class SafeBudgetCard extends StatelessWidget {
     super.key,
     required this.safeBudget,
     required this.endDate,
-    required List<Transaction> transactions,
+    required this.transactions,
   });
 
   final double safeBudget;
   final DateTime endDate;
+  final List<Transaction> transactions;
 
   String _formatDate(DateTime date) {
     final months = [
@@ -33,8 +34,33 @@ class SafeBudgetCard extends StatelessWidget {
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
+  double _calculateTodaySpent() {
+    final now = DateTime.now();
+    final todayStr =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+    double total = 0.0;
+    for (final tx in transactions) {
+      if (tx.transactionDate.startsWith(todayStr)) {
+        if (tx.type.toLowerCase() == 'expense' ||
+            tx.type.toLowerCase() == 'debit' ||
+            tx.amount < 0) {
+          total += tx.amount.abs();
+        }
+      }
+    }
+    return total;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final todaySpent = _calculateTodaySpent();
+
+    // Custom dynamic message strings based on actual daily consumption behavior
+    final descriptionText = todaySpent > 0
+        ? 'You\'ve spent ₱${todaySpent.toStringAsFixed(2)} today. You have ₱${safeBudget.toStringAsFixed(2)} remaining to stay on track until ${_formatDate(endDate)}.'
+        : 'You haven\'t spent anything today! You have up to ₱${safeBudget.toStringAsFixed(2)} available to use and remain on track until ${_formatDate(endDate)}.';
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.lg),
@@ -63,9 +89,9 @@ class SafeBudgetCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.lg * 2),
+            padding: const EdgeInsets.only(right: AppSpacing.lg),
             child: Text(
-              'You can spend up to ₱${safeBudget.toStringAsFixed(2)} today and stay on track until ${_formatDate(endDate)}.',
+              descriptionText,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Colors.white.withAlpha(220),
                 height: 1.4,
