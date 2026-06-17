@@ -16,4 +16,14 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Future<AppVersionInfo> getAppVersionInfo() async {
     return const AppVersionInfo(version: '1.0.0', developer: 'Jesie Gapol');
   }
+
+  @override
+  Future<void> saveThemePreference(bool isDarkMode) async {
+    await localDataSource.cacheThemeMode(isDarkMode);
+  }
+
+  @override
+  Future<bool> loadThemePreference() async {
+    return await localDataSource.getThemeMode();
+  }
 }

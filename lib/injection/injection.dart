@@ -5,7 +5,9 @@ import 'package:peso_path/features/settings/data/repositories/settings_repositor
 import 'package:peso_path/features/settings/domain/repositories/settings_repository.dart';
 import 'package:peso_path/features/settings/domain/use_cases/clear_all_user_data.dart';
 import 'package:peso_path/features/settings/domain/use_cases/get_app_version_info.dart';
+import 'package:peso_path/features/settings/domain/use_cases/manage_theme.dart';
 import 'package:peso_path/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:peso_path/features/settings/presentation/bloc/theme_cubit.dart';
 
 import '../core/session/current_user.dart';
 
@@ -186,5 +188,14 @@ Future<void> init() async {
       getAppVersionInfo: sl<GetAppVersionInfo>(),
       clearAllUserData: sl<ClearAllUserData>(),
     ),
+  );
+
+  // Use cases
+  sl.registerLazySingleton(() => LoadThemePreference(sl()));
+  sl.registerLazySingleton(() => SaveThemePreference(sl()));
+
+  // Cubit
+  sl.registerFactory(
+    () => ThemeCubit(loadThemePreference: sl(), saveThemePreference: sl()),
   );
 }

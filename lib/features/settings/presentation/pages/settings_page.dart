@@ -8,6 +8,7 @@ import 'package:peso_path/features/auth/presentation/bloc/auth_event.dart';
 import 'package:peso_path/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:peso_path/features/settings/presentation/bloc/settings_event.dart';
 import 'package:peso_path/features/settings/presentation/bloc/settings_state.dart';
+import 'package:peso_path/features/settings/presentation/bloc/theme_cubit.dart';
 import 'package:peso_path/features/settings/presentation/widgets/settings_tile.dart';
 import 'package:peso_path/shared/widgets/app_confirmation_dialog.dart';
 import 'package:peso_path/shared/widgets/app_snackbar.dart';
@@ -77,17 +78,12 @@ class _SettingsPageState extends State<SettingsPage> {
               subtitle: isDark ? 'Dark Mode Active' : 'Light Mode Active',
               trailing: Switch(
                 value: isDark,
-                onChanged: (value) {
-                  AppSnackbar.showInfo(
-                    context,
-                    'Dynamic theme switching to be implemented!',
-                  );
+                onChanged: (bool value) {
+                  context.read<ThemeCubit>().toggleTheme(value);
                 },
-
                 trackOutlineColor: const WidgetStatePropertyAll(
                   Colors.transparent,
                 ),
-
                 trackColor: WidgetStateProperty.resolveWith<Color?>((states) {
                   if (states.contains(WidgetState.selected)) {
                     return AppColors.primary.withValues(alpha: 0.16);
@@ -96,7 +92,6 @@ class _SettingsPageState extends State<SettingsPage> {
                       ? Colors.white.withValues(alpha: 0.1)
                       : Colors.black.withValues(alpha: 0.06);
                 }),
-
                 thumbColor: WidgetStateProperty.resolveWith<Color?>((states) {
                   if (states.contains(WidgetState.selected)) {
                     return AppColors.primary;

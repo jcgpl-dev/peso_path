@@ -7,6 +7,7 @@ import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.da
 import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
 import 'package:peso_path/features/savings/presentation/bloc/savings_event.dart';
 import 'package:peso_path/features/savings/presentation/bloc/savings_state.dart';
+import 'package:peso_path/features/settings/presentation/bloc/theme_cubit.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_event.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -42,23 +43,26 @@ class MyApp extends StatelessWidget {
         BlocProvider<SavingsBloc>(
           create: (context) => sl<SavingsBloc>()..add(LoadSavingsGoals()),
         ),
-
         BlocProvider<TransactionBloc>(create: (_) => sl<TransactionBloc>()),
+        BlocProvider<ThemeCubit>(create: (_) => sl<ThemeCubit>()),
       ],
-
       child: BlocListener<SavingsBloc, SavingsState>(
         listener: (context, state) {
           if (state is SavingsOperationSuccess) {
             context.read<TransactionBloc>().add(LoadTransactions());
           }
         },
-        child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: 'Peso Path',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.system,
-          routerConfig: AppRouter.router,
+        child: BlocBuilder<ThemeCubit, ThemeMode>(
+          builder: (context, themeMode) {
+            return MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              title: 'Peso Path',
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: themeMode,
+              routerConfig: AppRouter.router,
+            );
+          },
         ),
       ),
     );
