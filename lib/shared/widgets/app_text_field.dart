@@ -9,6 +9,7 @@ class AppTextField extends StatefulWidget {
     this.keyboardType,
     this.prefixText,
     this.hintText,
+    this.textInputAction, // Added parameter
   });
 
   final TextEditingController controller;
@@ -17,6 +18,7 @@ class AppTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final String? prefixText;
   final String? hintText;
+  final TextInputAction? textInputAction; // Added field
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -40,6 +42,7 @@ class _AppTextFieldState extends State<AppTextField> {
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       obscureText: _obscureText,
+      textInputAction: widget.textInputAction, // Wired up to input widget
       decoration: InputDecoration(
         labelText: widget.label,
         prefixText: widget.prefixText,

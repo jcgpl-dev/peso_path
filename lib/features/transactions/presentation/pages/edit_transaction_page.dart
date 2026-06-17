@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:peso_path/core/theme/app_colors.dart';
-import 'package:peso_path/core/theme/app_radius.dart';
-import 'package:peso_path/core/theme/app_text_styles.dart';
 import 'package:peso_path/shared/widgets/app_date_picker_tile.dart';
 import 'package:peso_path/shared/widgets/app_dropdown_field.dart';
 
@@ -43,6 +41,14 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     'Others',
   ];
 
+  final incomeCategories = [
+    'Salary',
+    'Freelance',
+    'Investments',
+    'Allowance',
+    'Others',
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -56,7 +62,11 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     _selectedDate =
         DateTime.tryParse(widget.transaction.transactionDate) ?? DateTime.now();
 
-    if (expenseCategories.contains(widget.transaction.category)) {
+    final availableCategories = widget.transaction.type == 'expense'
+        ? expenseCategories
+        : incomeCategories;
+
+    if (availableCategories.contains(widget.transaction.category)) {
       selectedCategory = widget.transaction.category;
     } else {
       selectedCategory = 'Others';
@@ -186,14 +196,17 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                   AppDropdownField<String>(
                     label: 'Category',
                     value: selectedCategory,
-                    items: expenseCategories
-                        .map(
-                          (e) => DropdownMenuItem<String>(
-                            value: e,
-                            child: Text(e),
-                          ),
-                        )
-                        .toList(),
+                    items:
+                        (widget.transaction.type == 'expense'
+                                ? expenseCategories
+                                : incomeCategories)
+                            .map(
+                              (e) => DropdownMenuItem<String>(
+                                value: e,
+                                child: Text(e),
+                              ),
+                            )
+                            .toList(),
                     onChanged: (value) {
                       setState(() {
                         selectedCategory = value!;

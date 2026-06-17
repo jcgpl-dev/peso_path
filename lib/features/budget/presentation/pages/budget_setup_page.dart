@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:peso_path/core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+import '../../../../shared/widgets/app_choice_chip.dart'; // Reusing your project chip component
 import '../bloc/budget_bloc.dart';
 import '../bloc/budget_event.dart';
 import '../bloc/budget_state.dart';
@@ -21,15 +22,16 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
   DateTime? startDate;
   DateTime? endDate;
   String? _prefilledCycleId;
+  String _selectedPreset = 'Custom';
 
-  void _prefillFromCycle(BudgetCycle cycle) {
-    if (_prefilledCycleId == cycle.id) return;
+  @override
+  void initState() {
+    super.initState();
+    _applyPreset('This Month'); // Standard smart initialization fallback
 
-    _prefilledCycleId = cycle.id;
-    amountController.text = cycle.budgetAmount.toStringAsFixed(2);
-    startDate = DateTime.parse(cycle.startDate);
-    endDate = DateTime.parse(cycle.endDate);
-    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BudgetBloc>().add(LoadActiveBudgetCycle());
+    });
   }
 
   @override
@@ -38,36 +40,82 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void _prefillFromCycle(BudgetCycle cycle) {
+    if (_prefilledCycleId == cycle.id) return;
+    _prefilledCycleId = cycle.id;
+    amountController.text = cycle.budgetAmount.toStringAsFixed(2);
+    startDate = DateTime.parse(cycle.startDate);
+    endDate = DateTime.parse(cycle.endDate);
+    _selectedPreset = 'Custom';
+    setState(() {});
+  }
 
+  void _applyPreset(String preset) {
     final now = DateTime.now();
-    startDate = DateTime(now.year, now.month, now.day);
-    endDate = DateTime(now.year, now.month + 1, now.day);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BudgetBloc>().add(LoadActiveBudgetCycle());
+    setState(() {
+      _selectedPreset = preset;
+      if (preset == 'This Month') {
+        startDate = DateTime(now.year, now.month, 1);
+        endDate = DateTime(
+          now.year,
+          now.month + 1,
+          1,
+        ).subtract(const Duration(days: 1));
+      } else if (preset == 'Next Month') {
+        startDate = DateTime(now.year, now.month + 1, 1);
+        endDate = DateTime(
+          now.year,
+          now.month + 2,
+          1,
+        ).subtract(const Duration(days: 1));
+      }
     });
+  }
+
+  void _submitForm() {
+    if (amountController.text.isEmpty || startDate == null || endDate == null)
+      return;
+
+    final amount = double.tryParse(amountController.text) ?? 0.0;
+    if (amount <= 0) return;
+
+    if (_prefilledCycleId != null) {
+      context.read<BudgetBloc>().add(
+        UpdateBudgetCycleRequested(
+          id: _prefilledCycleId!,
+          budgetAmount: amount,
+          startDate: startDate!,
+          endDate: endDate!,
+        ),
+      );
+    } else {
+      context.read<BudgetBloc>().add(
+        CreateBudgetCycleRequested(
+          budgetAmount: amount,
+          startDate: startDate!,
+          endDate: endDate!,
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isEditing = _prefilledCycleId != null;
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Budget Setup')),
+        appBar: AppBar(
+          title: Text(isEditing ? 'Modify Active Budget' : 'New Budget Setup'),
+        ),
         body: BlocConsumer<BudgetBloc, BudgetState>(
           listener: (context, state) {
             if (state is BudgetLoaded) {
               _prefillFromCycle(state.cycle);
             }
-
-            if (state is BudgetCreated) {
-              context.go('/dashboard');
-            }
-
-            if (state is BudgetUpdated) {
+            if (state is BudgetCreated || state is BudgetUpdated) {
               if (context.canPop()) {
                 context.pop();
               } else {
@@ -76,150 +124,162 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
             }
           },
           builder: (context, state) {
-            if (state is BudgetLoaded) {
-              return Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppTextField(
-                      controller: amountController,
-                      label: 'Current Budget',
-                      keyboardType: TextInputType.number,
-                      prefixText: '₱ ',
-                    ),
-                    const SizedBox(height: 16),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(
-                        startDate == null
-                            ? 'Select Start Date'
-                            : startDate.toString().split(' ')[0],
-                      ),
-                      trailing: const Icon(Icons.calendar_today),
-                      onTap: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          firstDate: DateTime(2024),
-                          lastDate: DateTime(2100),
-                          initialDate: startDate ?? DateTime.now(),
-                        );
-                        if (picked != null) {
-                          setState(() => startDate = picked);
-                        }
-                      },
-                    ),
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(
-                        endDate == null
-                            ? 'Select End Date'
-                            : endDate.toString().split(' ')[0],
-                      ),
-                      trailing: const Icon(Icons.calendar_today),
-                      onTap: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          firstDate: DateTime(2024),
-                          lastDate: DateTime(2100),
-                          initialDate: endDate ?? startDate ?? DateTime.now(),
-                        );
-                        if (picked != null) {
-                          setState(() => endDate = picked);
-                        }
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    PrimaryButton(
-                      text: 'Save Changes',
-                      onPressed: () {
-                        if (startDate == null || endDate == null) {
-                          return;
-                        }
-                        context.read<BudgetBloc>().add(
-                          UpdateBudgetCycleRequested(
-                            id: state.cycle.id,
-                            budgetAmount: double.parse(amountController.text),
-                            startDate: startDate!,
-                            endDate: endDate!,
-                          ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return Padding(
+            return SingleChildScrollView(
               padding: const EdgeInsets.all(AppSpacing.md),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppTextField(
                     controller: amountController,
-                    label: 'Budget Amount',
+                    label: isEditing
+                        ? 'Adjust Budget Limit'
+                        : 'Budget Target Amount',
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     prefixText: '₱ ',
-                    keyboardType: TextInputType.number,
+                    textInputAction: TextInputAction.done,
                   ),
-                  const SizedBox(height: 16),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      startDate == null
-                          ? 'Select Start Date'
-                          : startDate.toString().split(' ')[0],
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Quick Timeline Presets Bar
+                  Text(
+                    'Quick Duration Presets',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.outline,
                     ),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime(2024),
-                        lastDate: DateTime(2100),
-                        initialDate: startDate ?? DateTime.now(),
-                      );
-                      if (picked != null) {
-                        setState(() => startDate = picked);
-                      }
-                    },
                   ),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      endDate == null
-                          ? 'Select End Date'
-                          : endDate.toString().split(' ')[0],
-                    ),
-                    trailing: const Icon(Icons.calendar_today),
-                    onTap: () async {
-                      final picked = await showDatePicker(
-                        context: context,
-                        firstDate: DateTime(2024),
-                        lastDate: DateTime(2100),
-                        initialDate: endDate ?? startDate ?? DateTime.now(),
-                      );
-                      if (picked != null) {
-                        setState(() => endDate = picked);
-                      }
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  PrimaryButton(
-                    text: 'Create Budget',
-                    isLoading: state is BudgetLoading,
-                    onPressed: () {
-                      if (amountController.text.isEmpty ||
-                          startDate == null ||
-                          endDate == null) {
-                        return;
-                      }
-                      context.read<BudgetBloc>().add(
-                        CreateBudgetCycleRequested(
-                          budgetAmount: double.parse(amountController.text),
-                          startDate: startDate!,
-                          endDate: endDate!,
+                  const SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: ['This Month', 'Next Month', 'Custom'].map((
+                      preset,
+                    ) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: AppSpacing.xs),
+                        child: AppChoiceChip(
+                          label: preset,
+                          isSelected: _selectedPreset == preset,
+                          onSelected: (selected) {
+                            if (selected) {
+                              if (preset == 'Custom') {
+                                setState(() => _selectedPreset = 'Custom');
+                              } else {
+                                _applyPreset(preset);
+                              }
+                            }
+                          },
                         ),
                       );
-                    },
+                    }).toList(),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Date Selectors Grouped Card
+                  Card(
+                    elevation: 0,
+                    margin: EdgeInsets.zero,
+                    color: colorScheme.surfaceContainerLow,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        ListTile(
+                          leading: Icon(
+                            Icons.date_range_rounded,
+                            color: colorScheme.primary,
+                          ),
+                          title: const Text(
+                            'Starts On',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          subtitle: Text(
+                            startDate == null
+                                ? 'Select Date'
+                                : startDate.toString().split(' ')[0],
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              firstDate: DateTime(2025),
+                              lastDate: DateTime(2100),
+                              initialDate: startDate ?? DateTime.now(),
+                            );
+                            if (picked != null) {
+                              setState(() {
+                                startDate = picked;
+                                _selectedPreset = 'Custom';
+                                // Intelligent forward alignment rule
+                                if (endDate == null ||
+                                    endDate!.isBefore(picked)) {
+                                  endDate = DateTime(
+                                    picked.year,
+                                    picked.month + 1,
+                                    picked.day,
+                                  );
+                                }
+                              });
+                            }
+                          },
+                        ),
+                        Divider(
+                          height: 1,
+                          indent: 56,
+                          color: colorScheme.surfaceContainerHigh,
+                        ),
+                        ListTile(
+                          leading: Icon(
+                            Icons.flag_rounded,
+                            color: colorScheme.error,
+                          ),
+                          title: const Text(
+                            'Ends On',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          subtitle: Text(
+                            endDate == null
+                                ? 'Select Date'
+                                : endDate.toString().split(' ')[0],
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () async {
+                            final picked = await showDatePicker(
+                              context: context,
+                              firstDate: startDate ?? DateTime(2025),
+                              lastDate: DateTime(2100),
+                              initialDate:
+                                  endDate ?? startDate ?? DateTime.now(),
+                            );
+                            if (picked != null) {
+                              setState(() {
+                                endDate = picked;
+                                _selectedPreset = 'Custom';
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+
+                  PrimaryButton(
+                    text: isEditing
+                        ? 'Save Financial Profile'
+                        : 'Initialize Budget Plan',
+                    isLoading: state is BudgetLoading,
+                    onPressed: _submitForm,
                   ),
                 ],
               ),
