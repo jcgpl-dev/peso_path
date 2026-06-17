@@ -27,7 +27,7 @@ class AuthAuthenticated extends AuthState {
   });
 
   @override
-  List<Object?> get props => [userId, username, name];
+  List<Object?> get props => [userId, username, name, profilePicture];
 }
 
 class AuthFailure extends AuthState {

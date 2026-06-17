@@ -1,3 +1,4 @@
+import 'dart:io' as io;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:peso_path/core/theme/app_text_styles.dart';
@@ -5,7 +6,13 @@ import 'package:peso_path/core/utils/greeting_util.dart';
 
 class DashboardHeader extends StatelessWidget {
   final String userFullname;
-  const DashboardHeader({super.key, required this.userFullname});
+  final String? profilePicture;
+
+  const DashboardHeader({
+    super.key,
+    required this.userFullname,
+    this.profilePicture,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +44,13 @@ class DashboardHeader extends StatelessWidget {
           child: CircleAvatar(
             radius: 24,
             backgroundColor: colorScheme.primary.withAlpha(40),
-            child: Icon(Icons.person_rounded, color: colorScheme.primary),
+            backgroundImage:
+                profilePicture != null && profilePicture!.isNotEmpty
+                ? FileImage(io.File(profilePicture!))
+                : null,
+            child: profilePicture == null || profilePicture!.isEmpty
+                ? Icon(Icons.person_rounded, color: colorScheme.primary)
+                : null,
           ),
         ),
       ],

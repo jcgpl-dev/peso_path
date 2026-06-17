@@ -81,12 +81,17 @@ class _DashboardPageState extends State<DashboardPage> {
                       BlocBuilder<AuthBloc, AuthState>(
                         builder: (context, authState) {
                           String displayName = "User";
+                          String? profilePicPath;
 
                           if (authState is AuthAuthenticated) {
                             displayName = authState.name;
+                            profilePicPath = authState.profilePicture;
                           }
 
-                          return DashboardHeader(userFullname: displayName);
+                          return DashboardHeader(
+                            userFullname: displayName,
+                            profilePicture: profilePicPath,
+                          );
                         },
                       ),
 

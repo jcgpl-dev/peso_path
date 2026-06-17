@@ -18,7 +18,7 @@ class DatabaseHelper {
 
     return openDatabase(
       join(dbPath, 'peso_path.db'),
-      version: 5,
+      version: 6,
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE IF NOT EXISTS users(
@@ -37,6 +37,7 @@ class DatabaseHelper {
           user_id TEXT NOT NULL,
           title TEXT NOT NULL,
           amount REAL NOT NULL,
+          type TEXT NOT NULL,
           category TEXT NOT NULL,
           note TEXT,
           transaction_date TEXT NOT NULL,
@@ -49,6 +50,7 @@ class DatabaseHelper {
         CREATE INDEX IF NOT EXISTS idx_transactions_user_id
         ON transactions(user_id)
         ''');
+
         await db.execute('''
         CREATE TABLE IF NOT EXISTS budget_cycles(
           id TEXT PRIMARY KEY,
@@ -78,11 +80,21 @@ class DatabaseHelper {
           ''');
           await db.delete('transactions');
         }
+
+        if (oldVersion < 5) {
+          try {
+            await db.execute(
+              "ALTER TABLE transactions ADD COLUMN type TEXT NOT NULL DEFAULT 'expense'",
+            );
+          } catch (e) {}
+        }
+
         if (oldVersion < 6) {
           await db.execute(
             "ALTER TABLE users ADD COLUMN profile_picture TEXT;",
           );
         }
+
         await db.execute('''
         CREATE TABLE IF NOT EXISTS budget_cycles(
           id TEXT PRIMARY KEY,
