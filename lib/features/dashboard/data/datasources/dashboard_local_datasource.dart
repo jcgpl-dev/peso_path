@@ -1,5 +1,4 @@
 import 'package:peso_path/core/database/database_helper.dart';
-
 import '../../../../core/session/current_user.dart';
 import '../../../budget/data/models/budget_cycle_model.dart';
 import '../../../transactions/data/models/transaction_model.dart';
@@ -12,7 +11,6 @@ class DashboardLocalDataSource {
 
   Future<DashboardSummaryModel> getDashboardSummary() async {
     final db = await DatabaseHelper.instance.database;
-
     final userId = currentUser.requireUserId();
 
     final cycleResult = await db.query(
@@ -22,7 +20,6 @@ class DashboardLocalDataSource {
       limit: 1,
     );
 
-    // No active budget cycle yet
     if (cycleResult.isEmpty) {
       return DashboardSummaryModel(
         budgetAmount: 0,
@@ -36,7 +33,6 @@ class DashboardLocalDataSource {
 
     final cycle = BudgetCycleModel.fromMap(cycleResult.first);
 
-    // Transactions inside active budget cycle only
     final transactionMaps = await db.query(
       'transactions',
       where: 'user_id = ? AND transaction_date >= ? AND transaction_date <= ?',
@@ -44,17 +40,21 @@ class DashboardLocalDataSource {
     );
 
     double totalSpent = 0;
+    double totalIncome = 0;
 
     for (final transaction in transactionMaps) {
-      if (transaction['type'] == 'expense') {
-        totalSpent += (transaction['amount'] as num).toDouble();
+      final amount = (transaction['amount'] as num).toDouble();
+      if (transaction['type'] == 'income') {
+        totalIncome += amount;
+      } else {
+        totalSpent += amount;
       }
     }
 
-    final remainingBudget = cycle.budgetAmount - totalSpent;
+    final adjustedBudgetAmount = cycle.budgetAmount + totalIncome;
+    final remainingBudget = adjustedBudgetAmount - totalSpent;
 
     final now = DateTime.now();
-
     final endDate = DateTime.parse(cycle.endDate);
 
     final remainingDays = endDate.difference(now).inDays + 1;
@@ -76,7 +76,7 @@ class DashboardLocalDataSource {
         .toList();
 
     return DashboardSummaryModel(
-      budgetAmount: cycle.budgetAmount,
+      budgetAmount: adjustedBudgetAmount,
       totalSpent: totalSpent,
       remainingBudget: remainingBudget,
       safeBudget: safeBudget,

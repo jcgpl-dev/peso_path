@@ -20,6 +20,13 @@ class TransactionCard extends StatelessWidget {
         return Icons.shopping_bag_rounded;
       case 'savings':
         return Icons.savings_rounded;
+      // Income Categories
+      case 'salary':
+        return Icons.work_rounded;
+      case 'freelance':
+        return Icons.monetization_on_rounded;
+      case 'allowance':
+        return Icons.card_giftcard_rounded;
       default:
         return Icons.more_horiz_rounded;
     }
@@ -36,6 +43,9 @@ class TransactionCard extends StatelessWidget {
       case 'shopping':
         return Colors.purple;
       case 'savings':
+      case 'salary':
+      case 'freelance':
+      case 'allowance':
         return Colors.green;
       default:
         return Colors.grey;
@@ -47,6 +57,9 @@ class TransactionCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final color = _categoryColor(transaction.category);
     final icon = _categoryIcon(transaction.category);
+
+    // Check if income to alter text presentation dynamically
+    final isIncome = transaction.type == 'income';
 
     return InkWell(
       onTap: onTap,
@@ -95,10 +108,10 @@ class TransactionCard extends StatelessWidget {
             const SizedBox(width: AppSpacing.sm),
 
             Text(
-              '-₱${transaction.amount.toStringAsFixed(2)}',
+              '${isIncome ? '+' : '-'}₱${transaction.amount.toStringAsFixed(2)}',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: Colors.red,
+                color: isIncome ? Colors.green : Colors.red,
               ),
             ),
           ],

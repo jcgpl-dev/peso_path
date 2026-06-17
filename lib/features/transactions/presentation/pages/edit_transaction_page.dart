@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/core/theme/app_colors.dart';
+import 'package:peso_path/core/theme/app_radius.dart';
+import 'package:peso_path/core/theme/app_text_styles.dart';
+import 'package:peso_path/shared/widgets/app_date_picker_tile.dart';
 import 'package:peso_path/shared/widgets/app_dropdown_field.dart';
 
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_snackbar.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
+
+import '../../../../core/utils/date_formatter.dart';
 
 import '../../domain/entities/transaction.dart';
 import '../bloc/transaction_bloc.dart';
@@ -26,6 +32,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
   late final TextEditingController amountController;
   late final TextEditingController noteController;
   late String selectedCategory;
+  late DateTime _selectedDate;
 
   final expenseCategories = [
     'Food',
@@ -46,6 +53,9 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     );
     noteController = TextEditingController(text: widget.transaction.note ?? '');
 
+    _selectedDate =
+        DateTime.tryParse(widget.transaction.transactionDate) ?? DateTime.now();
+
     if (expenseCategories.contains(widget.transaction.category)) {
       selectedCategory = widget.transaction.category;
     } else {
@@ -59,6 +69,33 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     amountController.dispose();
     noteController.dispose();
     super.dispose();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final activeSemColor = widget.transaction.type == 'expense'
+        ? AppColors.expense
+        : AppColors.income;
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(
+              context,
+            ).colorScheme.copyWith(primary: activeSemColor),
+          ),
+          child: child!,
+        );
+      },
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   void submit() {
@@ -78,7 +115,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
       type: widget.transaction.type,
       category: selectedCategory,
       note: noteController.text.trim(),
-      transactionDate: widget.transaction.transactionDate,
+      transactionDate: _selectedDate.toIso8601String(),
       createdAt: widget.transaction.createdAt,
     );
 
@@ -89,13 +126,17 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final surfaceColor = isDark
+        ? AppColors.darkSurface
+        : AppColors.lightSurface;
+
     return BlocListener<TransactionBloc, TransactionState>(
       listener: (context, state) {
         if (state is TransactionUpdated) {
           AppSnackbar.showSuccess(context, 'Transaction updated successfully');
           Navigator.pop(context);
         }
-
         if (state is TransactionFailure) {
           AppSnackbar.showError(context, state.message);
         }
@@ -124,6 +165,7 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
             padding: const EdgeInsets.all(AppSpacing.lg),
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppTextField(
                     controller: titleController,
@@ -159,6 +201,14 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
+
+                  AppDatePickerTile(
+                    label: 'Transaction Date',
+                    valueText: _selectedDate.toReadableString(),
+                    onTap: () => _selectDate(context),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
                   AppTextField(
                     controller: noteController,
                     label: 'Note (Optional)',
