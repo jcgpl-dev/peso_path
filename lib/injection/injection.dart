@@ -1,5 +1,18 @@
-import 'package:peso_path/features/auth/domain/usecases/logout_user.dart';
-import 'package:peso_path/features/auth/domain/usecases/update_profile_pic.dart';
+import 'package:get_it/get_it.dart';
+
+import '../core/session/current_user.dart';
+
+// Auth
+import '../features/auth/data/datasources/auth_local_datasource.dart';
+import '../features/auth/data/repositories/auth_repository_impl.dart';
+import '../features/auth/domain/repositories/auth_repository.dart';
+import '../features/auth/domain/usecases/login_user.dart';
+import '../features/auth/domain/usecases/logout_user.dart';
+import '../features/auth/domain/usecases/register_user.dart';
+import '../features/auth/domain/usecases/update_profile_pic.dart';
+import '../features/auth/presentation/bloc/auth_bloc.dart';
+
+// Budget
 import 'package:peso_path/features/budget/data/datasources/budget_local_datasource.dart';
 import 'package:peso_path/features/budget/data/repositories/budget_repository_impl.dart';
 import 'package:peso_path/features/budget/domain/repositories/budget_repository.dart';
@@ -8,8 +21,22 @@ import 'package:peso_path/features/budget/domain/usecases/get_active_budget_cycl
 import 'package:peso_path/features/budget/domain/usecases/update_budget_cycle.dart';
 import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
 
-import '../core/session/current_user.dart';
-import 'package:get_it/get_it.dart';
+// Dashboard
+import 'package:peso_path/features/dashboard/data/datasources/dashboard_local_datasource.dart';
+import 'package:peso_path/features/dashboard/data/repositories/dashboard_repository_impl.dart';
+import 'package:peso_path/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:peso_path/features/dashboard/domain/usecases/get_dashboard_summary.dart';
+import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+
+// Savings (New Features Added)
+import 'package:peso_path/features/savings/data/datasources/savings_local_datasource.dart';
+import 'package:peso_path/features/savings/data/repositories/savings_repository_impl.dart';
+import 'package:peso_path/features/savings/domain/repositories/savings_repository.dart';
+import 'package:peso_path/features/savings/domain/usecases/add_funds_to_goal.dart';
+import 'package:peso_path/features/savings/domain/usecases/get_savings_goals.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
+
+// Transactions
 import 'package:peso_path/features/transactions/data/datasources/transaction_local_datasource.dart';
 import 'package:peso_path/features/transactions/data/repositories/transaction_repository_impl.dart';
 import 'package:peso_path/features/transactions/domain/repositories/transaction_repository.dart';
@@ -18,19 +45,6 @@ import 'package:peso_path/features/transactions/domain/usecases/delete_transacti
 import 'package:peso_path/features/transactions/domain/usecases/get_transactions.dart';
 import 'package:peso_path/features/transactions/domain/usecases/update_transaction.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
-
-import '../features/auth/data/datasources/auth_local_datasource.dart';
-import '../features/auth/data/repositories/auth_repository_impl.dart';
-import '../features/auth/domain/repositories/auth_repository.dart';
-import '../features/auth/domain/usecases/login_user.dart';
-import '../features/auth/domain/usecases/register_user.dart';
-import '../features/auth/presentation/bloc/auth_bloc.dart';
-
-import 'package:peso_path/features/dashboard/data/datasources/dashboard_local_datasource.dart';
-import 'package:peso_path/features/dashboard/data/repositories/dashboard_repository_impl.dart';
-import 'package:peso_path/features/dashboard/domain/repositories/dashboard_repository.dart';
-import 'package:peso_path/features/dashboard/domain/usecases/get_dashboard_summary.dart';
-import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -50,9 +64,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RegisterUser(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LoginUser(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LogoutUser(sl<AuthRepository>()));
-  sl.registerLazySingleton(
-    () => UpdateProfilePic(sl<AuthRepository>()),
-  ); // Moved up here safely
+  sl.registerLazySingleton(() => UpdateProfilePic(sl<AuthRepository>()));
 
   // Auth Bloc
   sl.registerFactory(
@@ -60,7 +72,7 @@ Future<void> init() async {
       registerUser: sl<RegisterUser>(),
       loginUser: sl<LoginUser>(),
       logoutUser: sl<LogoutUser>(),
-      updateProfilePic: sl<UpdateProfilePic>(), // Injected cleanly
+      updateProfilePic: sl<UpdateProfilePic>(),
       currentUser: sl<CurrentUser>(),
     ),
   );
@@ -86,6 +98,7 @@ Future<void> init() async {
       getTransactions: sl(),
       updateTransaction: sl(),
       deleteTransaction: sl(),
+      savingsDataSource: sl<SavingsLocalDataSource>(),
     ),
   );
 
@@ -121,6 +134,27 @@ Future<void> init() async {
       updateBudgetCycle: sl(),
       getActiveBudgetCycle: sl(),
       currentUser: sl(),
+    ),
+  );
+
+  // Savings Datasource (passes the core tracking CurrentUser)
+  sl.registerLazySingleton(() => SavingsLocalDataSource(sl<CurrentUser>()));
+
+  // Savings Repository
+  sl.registerLazySingleton<SavingsRepository>(
+    () => SavingsRepositoryImpl(sl<SavingsLocalDataSource>()),
+  );
+
+  // Savings Use Cases
+  sl.registerLazySingleton(() => GetSavingsGoals(sl<SavingsRepository>()));
+  sl.registerLazySingleton(() => AddFundsToGoal(sl<SavingsRepository>()));
+
+  // Savings Bloc
+  sl.registerFactory(
+    () => SavingsBloc(
+      getSavingsGoals: sl<GetSavingsGoals>(),
+      addFundsToGoal: sl<AddFundsToGoal>(),
+      localDataSource: sl<SavingsLocalDataSource>(),
     ),
   );
 }

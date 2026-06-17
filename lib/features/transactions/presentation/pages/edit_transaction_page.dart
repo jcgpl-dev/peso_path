@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:peso_path/core/theme/app_colors.dart';
+import 'package:peso_path/shared/widgets/app_confirmation_dialog.dart';
 import 'package:peso_path/shared/widgets/app_date_picker_tile.dart';
 import 'package:peso_path/shared/widgets/app_dropdown_field.dart';
 
@@ -48,6 +49,26 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
     'Allowance',
     'Others',
   ];
+
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) => AppConfirmationDialog(
+        title: 'Delete Transaction',
+        message:
+            'Are you sure you want to delete "${widget.transaction.title}"?',
+        confirmText: 'Delete',
+        isDestructive: true,
+        onConfirm: () {
+          context.read<TransactionBloc>().add(
+            DeleteTransactionRequested(widget.transaction.id),
+          );
+          // Navigate back after triggering the delete event
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -136,15 +157,13 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final surfaceColor = isDark
-        ? AppColors.darkSurface
-        : AppColors.lightSurface;
-
     return BlocListener<TransactionBloc, TransactionState>(
       listener: (context, state) {
-        if (state is TransactionUpdated) {
-          AppSnackbar.showSuccess(context, 'Transaction updated successfully');
+        if (state is TransactionUpdated || state is TransactionDeleted) {
+          AppSnackbar.showSuccess(
+            context,
+            'Transaction processed successfully',
+          );
           Navigator.pop(context);
         }
         if (state is TransactionFailure) {
@@ -162,12 +181,8 @@ class _EditTransactionPageState extends State<EditTransactionPage> {
                   Icons.delete_outline_rounded,
                   color: Colors.red,
                 ),
-                onPressed: () {
-                  context.read<TransactionBloc>().add(
-                    DeleteTransactionRequested(widget.transaction.id),
-                  );
-                  Navigator.pop(context);
-                },
+                // UPDATED: Now calls the confirmation dialog
+                onPressed: () => _showDeleteConfirmation(context),
               ),
             ],
           ),

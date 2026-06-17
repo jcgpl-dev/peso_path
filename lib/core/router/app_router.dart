@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:peso_path/features/auth/presentation/pages/profile_page.dart';
 import 'package:peso_path/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
+import 'package:peso_path/features/savings/presentation/pages/add_savings_goal_page.dart';
 import 'package:peso_path/features/savings/presentation/pages/savings_page.dart';
 import 'package:peso_path/features/settings/presentation/pages/settings_page.dart';
 import 'package:peso_path/features/shell/presentation/pages/shell_page.dart';
@@ -54,6 +56,16 @@ class AppRouter {
           return BlocProvider.value(
             value: transactionBloc,
             child: EditTransactionPage(transaction: transaction),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/add-savings-goal',
+        builder: (context, state) {
+          final savingsBloc = state.extra as SavingsBloc;
+          return BlocProvider.value(
+            value: savingsBloc,
+            child: const AddSavingsGoalPage(),
           );
         },
       ),

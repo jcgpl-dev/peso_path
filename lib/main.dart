@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_event.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'core/router/app_router.dart';
@@ -31,6 +33,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<SavingsBloc>(
+          create: (context) => sl<SavingsBloc>()..add(LoadSavingsGoals()),
+        ),
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
 
         BlocProvider<DashboardBloc>(create: (_) => sl<DashboardBloc>()),

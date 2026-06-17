@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:peso_path/core/theme/app_spacing.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_event.dart';
 
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_event.dart';
@@ -34,41 +36,49 @@ class ShellPage extends StatelessWidget {
   ];
 
   void _onFabPressed(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: context.read<TransactionBloc>(),
-          child: const AddTransactionPage(),
+    final currentIndex = navigationShell.currentIndex;
+
+    if (currentIndex == 2) {
+      context.push('/add-savings-goal', extra: context.read<SavingsBloc>());
+    } else {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => BlocProvider.value(
+            value: context.read<TransactionBloc>(),
+            child: const AddTransactionPage(),
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<TransactionBloc>()..add(LoadTransactions()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => sl<TransactionBloc>()..add(LoadTransactions()),
+        ),
+        BlocProvider(create: (_) => sl<SavingsBloc>()..add(LoadSavingsGoals())),
+      ],
       child: Builder(
         builder: (context) {
           return Scaffold(
             body: navigationShell,
-
             floatingActionButton: FloatingActionButton(
               onPressed: () => _onFabPressed(context),
-
               elevation: 0,
-
               shape: const CircleBorder(),
-
               splashColor: Colors.white.withValues(alpha: 0.2),
-
-              child: const Icon(Icons.add, size: 28),
+              // Optional: Change icon based on tab if desired
+              child: Icon(
+                navigationShell.currentIndex == 2 ? Icons.savings : Icons.add,
+                size: 28,
+              ),
             ),
-
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
-
             bottomNavigationBar: BottomAppBar(
               clipBehavior: Clip.antiAlias,
 

@@ -18,7 +18,7 @@ class DatabaseHelper {
 
     return openDatabase(
       join(dbPath, 'peso_path.db'),
-      version: 6,
+      version: 7,
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE IF NOT EXISTS users(
@@ -68,6 +68,23 @@ class DatabaseHelper {
         CREATE INDEX IF NOT EXISTS idx_budget_cycles_user_id
         ON budget_cycles(user_id)
         ''');
+
+        await db.execute('''
+        CREATE TABLE IF NOT EXISTS savings_goals(
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          title TEXT NOT NULL,
+          target_amount REAL NOT NULL,
+          current_amount REAL NOT NULL DEFAULT 0.0,
+          created_at TEXT NOT NULL,
+          FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+        ''');
+
+        await db.execute('''
+        CREATE INDEX IF NOT EXISTS idx_savings_goals_user_id
+        ON savings_goals(user_id)
+        ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 3) {
@@ -86,7 +103,9 @@ class DatabaseHelper {
             await db.execute(
               "ALTER TABLE transactions ADD COLUMN type TEXT NOT NULL DEFAULT 'expense'",
             );
-          } catch (e) {}
+          } catch (e) {
+            //todo
+          }
         }
 
         if (oldVersion < 6) {
@@ -95,6 +114,7 @@ class DatabaseHelper {
           );
         }
 
+        // Catch-up validation block carried forward from v6 upgrade
         await db.execute('''
         CREATE TABLE IF NOT EXISTS budget_cycles(
           id TEXT PRIMARY KEY,
@@ -112,6 +132,26 @@ class DatabaseHelper {
         CREATE INDEX IF NOT EXISTS idx_budget_cycles_user_id
         ON budget_cycles(user_id)
         ''');
+
+        // 3. Migration logic block for updating existing locally installed devices
+        if (oldVersion < 7) {
+          await db.execute('''
+          CREATE TABLE IF NOT EXISTS savings_goals(
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            target_amount REAL NOT NULL,
+            current_amount REAL NOT NULL DEFAULT 0.0,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+          )
+          ''');
+
+          await db.execute('''
+          CREATE INDEX IF NOT EXISTS idx_savings_goals_user_id
+          ON savings_goals(user_id)
+          ''');
+        }
       },
     );
   }

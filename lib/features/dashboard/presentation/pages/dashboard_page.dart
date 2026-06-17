@@ -4,6 +4,8 @@ import 'package:peso_path/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:peso_path/features/auth/presentation/bloc/auth_state.dart';
 import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:peso_path/features/budget/presentation/bloc/budget_state.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_state.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_state.dart';
 
@@ -38,6 +40,13 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
       listeners: [
+        BlocListener<SavingsBloc, SavingsState>(
+          listener: (context, state) {
+            if (state is SavingsOperationSuccess) {
+              context.read<DashboardBloc>().add(LoadDashboardSummary());
+            }
+          },
+        ),
         BlocListener<TransactionBloc, TransactionState>(
           listener: (context, state) {
             if (state is TransactionAdded ||

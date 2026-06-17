@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_event.dart';
 import 'package:peso_path/features/transactions/presentation/sections/transactions_body_section.dart';
 import 'package:peso_path/features/transactions/presentation/sections/transactions_header_section.dart';
 
@@ -45,16 +47,25 @@ class _TransactionsPageState extends State<TransactionsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        appBar: AppBar(title: const Text('Transactions')),
+        appBar: AppBar(
+          title: Text(
+            'Transactions',
+            style: theme.textTheme.headlineMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
         body: BlocConsumer<TransactionBloc, TransactionState>(
           listener: (context, state) {
             if (state is TransactionDeleted) {
+              context.read<SavingsBloc>().add(LoadSavingsGoals());
               AppSnackbar.showSuccess(
                 context,
-                'Transaction deleted successfully',
+                'Transaction deleted and goal adjusted',
               );
             }
             if (state is TransactionFailure) {

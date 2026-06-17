@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:peso_path/core/theme/app_radius.dart';
 import 'package:peso_path/features/auth/presentation/bloc/auth_event.dart';
+import 'package:peso_path/shared/widgets/app_confirmation_dialog.dart';
 import 'package:peso_path/shared/widgets/app_snackbar.dart';
 import 'package:peso_path/shared/widgets/primary_button.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -192,27 +194,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (dialogContext) => AlertDialog(
-                          title: const Text('Log Out'),
-                          content: const Text(
-                            'Are you sure you want to log out from Peso Path?',
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(dialogContext),
-                              child: const Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(dialogContext);
-                                context.read<AuthBloc>().add(LogoutRequested());
-                              },
-                              child: Text(
-                                'Log Out',
-                                style: TextStyle(color: colorScheme.error),
-                              ),
-                            ),
-                          ],
+                        builder: (_) => AppConfirmationDialog(
+                          title: 'Log Out',
+                          message:
+                              'Are you sure you want to log out from Peso Path?',
+                          confirmText: 'Log Out',
+                          isDestructive: true,
+                          onConfirm: () =>
+                              context.read<AuthBloc>().add(LogoutRequested()),
                         ),
                       );
                     },

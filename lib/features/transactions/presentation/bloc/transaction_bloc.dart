@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:peso_path/features/savings/data/datasources/savings_local_datasource.dart';
 
 import '../../domain/usecases/add_transaction.dart';
 import '../../domain/usecases/delete_transaction.dart';
@@ -13,12 +14,14 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
   final GetTransactions getTransactions;
   final UpdateTransaction updateTransaction;
   final DeleteTransaction deleteTransaction;
+  final SavingsLocalDataSource savingsDataSource;
 
   TransactionBloc({
     required this.addTransaction,
     required this.getTransactions,
     required this.updateTransaction,
     required this.deleteTransaction,
+    required this.savingsDataSource,
   }) : super(TransactionInitial()) {
     on<LoadTransactions>(_onLoadTransactions);
 
@@ -77,10 +80,19 @@ class TransactionBloc extends Bloc<TransactionEvent, TransactionState> {
     emit(TransactionLoading());
 
     try {
+      final transactions = await getTransactions();
+      final txToDelete = transactions.firstWhere((t) => t.id == event.id);
+
       await deleteTransaction(event.id);
 
-      emit(TransactionDeleted());
+      if (txToDelete.category == 'Savings') {
+        await savingsDataSource.subtractFundsFromGoal(
+          txToDelete.title,
+          txToDelete.amount,
+        );
+      }
 
+      emit(TransactionDeleted());
       await _loadTransactions(emit, showLoading: false);
     } catch (e) {
       emit(TransactionFailure(e.toString()));

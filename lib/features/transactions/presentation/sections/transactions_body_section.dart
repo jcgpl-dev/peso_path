@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:peso_path/features/transactions/domain/entities/transaction.dart';
+import 'package:peso_path/shared/widgets/app_confirmation_dialog.dart';
 import '../../../../core/theme/app_radius.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../bloc/transaction_bloc.dart';
@@ -114,33 +115,18 @@ class TransactionsBodySection extends StatelessWidget {
                     key: ValueKey(transaction.id),
                     direction: DismissDirection.endToStart,
                     confirmDismiss: (direction) async {
-                      return await showDialog<bool>(
+                      return await showDialog(
                             context: context,
-                            builder: (dialogContext) => AlertDialog(
-                              title: const Text('Delete Transaction'),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(
-                                  AppRadius.md,
-                                ),
-                              ),
-                              content: Text(
-                                'Are you sure you want to delete "${transaction.title}"?',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(dialogContext, false),
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(dialogContext, true),
-                                  child: Text(
-                                    'Delete',
-                                    style: TextStyle(color: colorScheme.error),
+                            builder: (_) => AppConfirmationDialog(
+                              title: 'Delete Transaction',
+                              message:
+                                  'Are you sure you want to delete "${transaction.title}"?',
+                              confirmText: 'Delete',
+                              isDestructive: true,
+                              onConfirm: () =>
+                                  context.read<TransactionBloc>().add(
+                                    DeleteTransactionRequested(transaction.id),
                                   ),
-                                ),
-                              ],
                             ),
                           ) ??
                           false;
