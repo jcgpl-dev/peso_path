@@ -36,32 +36,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
+        BlocProvider<DashboardBloc>(create: (_) => sl<DashboardBloc>()),
+        BlocProvider<BudgetBloc>(create: (_) => sl<BudgetBloc>()),
         BlocProvider<SavingsBloc>(
           create: (context) => sl<SavingsBloc>()..add(LoadSavingsGoals()),
         ),
 
-        BlocListener<SavingsBloc, SavingsState>(
-          listener: (context, state) {
-            if (state is SavingsOperationSuccess) {
-              context.read<TransactionBloc>().add(LoadTransactions());
-            }
-          },
-        ),
-        BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
-
-        BlocProvider<DashboardBloc>(create: (_) => sl<DashboardBloc>()),
-
-        BlocProvider<BudgetBloc>(create: (_) => sl<BudgetBloc>()),
+        BlocProvider<TransactionBloc>(create: (_) => sl<TransactionBloc>()),
       ],
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: 'Peso Path',
 
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.darkTheme,
-        themeMode: ThemeMode.system,
-
-        routerConfig: AppRouter.router,
+      child: BlocListener<SavingsBloc, SavingsState>(
+        listener: (context, state) {
+          if (state is SavingsOperationSuccess) {
+            context.read<TransactionBloc>().add(LoadTransactions());
+          }
+        },
+        child: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          title: 'Peso Path',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.system,
+          routerConfig: AppRouter.router,
+        ),
       ),
     );
   }

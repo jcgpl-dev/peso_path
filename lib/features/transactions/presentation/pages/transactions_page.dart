@@ -54,7 +54,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
         appBar: AppBar(
           title: Text(
             'Transactions',
-            style: theme.textTheme.headlineMedium?.copyWith(
+            style: theme.textTheme.headlineLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
           ),

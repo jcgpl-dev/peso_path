@@ -1,16 +1,23 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:peso_path/features/auth/presentation/pages/profile_page.dart';
 import 'package:peso_path/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
 import 'package:peso_path/features/savings/presentation/pages/add_savings_goal_page.dart';
 import 'package:peso_path/features/savings/presentation/pages/savings_page.dart';
+import 'package:peso_path/features/settings/domain/use_cases/clear_all_user_data.dart';
+import 'package:peso_path/features/settings/domain/use_cases/get_app_version_info.dart';
+import 'package:peso_path/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:peso_path/features/settings/presentation/pages/about_us_page.dart';
+import 'package:peso_path/features/settings/presentation/pages/developer_page.dart';
 import 'package:peso_path/features/settings/presentation/pages/settings_page.dart';
 import 'package:peso_path/features/shell/presentation/pages/shell_page.dart';
 import 'package:peso_path/features/transactions/domain/entities/transaction.dart';
 import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
 import 'package:peso_path/features/transactions/presentation/pages/edit_transaction_page.dart';
 import 'package:peso_path/features/transactions/presentation/pages/transactions_page.dart';
+import 'package:peso_path/injection/injection.dart';
 import '../../features/budget/presentation/pages/budget_setup_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
@@ -69,6 +76,11 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(path: '/about', builder: (context, state) => const AboutUsPage()),
+      GoRoute(
+        path: '/developer',
+        builder: (context, state) => const DeveloperPage(),
+      ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
             ShellPage(navigationShell: navigationShell),
@@ -98,7 +110,10 @@ class AppRouter {
             routes: [
               GoRoute(
                 path: '/settings',
-                builder: (_, _) => const SettingsPage(),
+                builder: (_, _) => BlocProvider(
+                  create: (context) => sl<SettingsBloc>(),
+                  child: const SettingsPage(),
+                ),
               ),
             ],
           ),

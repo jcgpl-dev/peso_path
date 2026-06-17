@@ -1,4 +1,11 @@
 import 'package:get_it/get_it.dart';
+import 'package:peso_path/core/database/database_helper.dart';
+import 'package:peso_path/features/settings/data/datasources/settings_local_datasource.dart';
+import 'package:peso_path/features/settings/data/repositories/settings_repository_impl.dart';
+import 'package:peso_path/features/settings/domain/repositories/settings_repository.dart';
+import 'package:peso_path/features/settings/domain/use_cases/clear_all_user_data.dart';
+import 'package:peso_path/features/settings/domain/use_cases/get_app_version_info.dart';
+import 'package:peso_path/features/settings/presentation/bloc/settings_bloc.dart';
 
 import '../core/session/current_user.dart';
 
@@ -74,6 +81,7 @@ Future<void> init() async {
       logoutUser: sl<LogoutUser>(),
       updateProfilePic: sl<UpdateProfilePic>(),
       currentUser: sl<CurrentUser>(),
+      authLocalDataSource: sl<AuthLocalDataSource>(),
     ),
   );
 
@@ -155,6 +163,28 @@ Future<void> init() async {
       getSavingsGoals: sl<GetSavingsGoals>(),
       addFundsToGoal: sl<AddFundsToGoal>(),
       localDataSource: sl<SavingsLocalDataSource>(),
+    ),
+  );
+
+  // Settings Datasource
+  sl.registerLazySingleton<SettingsLocalDataSource>(
+    () => SettingsLocalDataSourceImpl(DatabaseHelper.instance),
+  );
+
+  // Settings Repository
+  sl.registerLazySingleton<SettingsRepository>(
+    () =>
+        SettingsRepositoryImpl(localDataSource: sl<SettingsLocalDataSource>()),
+  );
+
+  // Settings Use Cases
+  sl.registerLazySingleton(() => GetAppVersionInfo(sl<SettingsRepository>()));
+  sl.registerLazySingleton(() => ClearAllUserData(sl<SettingsRepository>()));
+
+  sl.registerFactory(
+    () => SettingsBloc(
+      getAppVersionInfo: sl<GetAppVersionInfo>(),
+      clearAllUserData: sl<ClearAllUserData>(),
     ),
   );
 }

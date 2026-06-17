@@ -1,5 +1,6 @@
 import '../../../../core/database/database_helper.dart';
 import '../models/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthLocalDataSource {
   final dbHelper = DatabaseHelper.instance;
@@ -53,5 +54,20 @@ class AuthLocalDataSource {
     if (result.isEmpty) return null;
 
     return UserModel.fromMap(result.first);
+  }
+
+  Future<void> saveUserSession(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_id', userId);
+  }
+
+  Future<String?> getStoredUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_id');
+  }
+
+  Future<void> clearUserSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('user_id');
   }
 }

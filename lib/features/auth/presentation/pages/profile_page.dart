@@ -191,6 +191,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
                   PrimaryButton(
                     text: 'Log Out',
+                    backgroundColor: colorScheme.error,
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -200,8 +201,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               'Are you sure you want to log out from Peso Path?',
                           confirmText: 'Log Out',
                           isDestructive: true,
-                          onConfirm: () =>
-                              context.read<AuthBloc>().add(LogoutRequested()),
+                          onConfirm: () {
+                            context.read<AuthBloc>().add(LogoutRequested());
+                            context.go('/login');
+                          },
                         ),
                       );
                     },

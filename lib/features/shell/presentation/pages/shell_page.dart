@@ -19,15 +19,12 @@ class ShellPage extends StatelessWidget {
 
   static const _tabs = [
     (icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home'),
-
     (
       icon: Icons.receipt_long_outlined,
       activeIcon: Icons.receipt_long,
       label: 'Transactions',
     ),
-
     (icon: Icons.savings_outlined, activeIcon: Icons.savings, label: 'Savings'),
-
     (
       icon: Icons.settings_outlined,
       activeIcon: Icons.settings,
@@ -64,38 +61,38 @@ class ShellPage extends StatelessWidget {
       ],
       child: Builder(
         builder: (context) {
+          final int currentIndex = navigationShell.currentIndex;
+          // Hide the FAB completely if we are viewing the Settings tab (index 3)
+          final bool showFab = currentIndex != 3;
+
           return Scaffold(
             body: navigationShell,
-            floatingActionButton: FloatingActionButton(
-              onPressed: () => _onFabPressed(context),
-              elevation: 0,
-              shape: const CircleBorder(),
-              splashColor: Colors.white.withValues(alpha: 0.2),
-              // Optional: Change icon based on tab if desired
-              child: Icon(
-                navigationShell.currentIndex == 2 ? Icons.savings : Icons.add,
-                size: 28,
-              ),
-            ),
+            floatingActionButton: showFab
+                ? FloatingActionButton(
+                    onPressed: () => _onFabPressed(context),
+                    elevation: 0,
+                    shape: const CircleBorder(),
+                    splashColor: Colors.white.withValues(alpha: 0.2),
+                    child: Icon(
+                      currentIndex == 2 ? Icons.savings : Icons.add,
+                      size: 28,
+                    ),
+                  )
+                : null,
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: BottomAppBar(
               clipBehavior: Clip.antiAlias,
-
-              shape: const CircularNotchedRectangle(),
-
+              // Smooth transition: remove the notch cutout when FAB is absent
+              shape: showFab ? const CircularNotchedRectangle() : null,
               notchMargin: AppSpacing.sm,
-
               padding: EdgeInsets.zero,
-
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
-
                 children: [
                   ..._buildNavItems(context, [0, 1]),
-
-                  const SizedBox(width: AppSpacing.xl),
-
+                  // Collapse the center gap spacing if the FAB is hidden
+                  if (showFab) const SizedBox(width: AppSpacing.xl),
                   ..._buildNavItems(context, [2, 3]),
                 ],
               ),
@@ -111,9 +108,7 @@ class ShellPage extends StatelessWidget {
 
     return indices.map((index) {
       final tab = _tabs[index];
-
       final isSelected = navigationShell.currentIndex == index;
-
       final color = isSelected
           ? colorScheme.primary
           : colorScheme.onSurfaceVariant;
@@ -124,24 +119,17 @@ class ShellPage extends StatelessWidget {
             index,
             initialLocation: index == navigationShell.currentIndex,
           ),
-
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-
             child: Column(
               mainAxisSize: MainAxisSize.min,
-
               children: [
                 Icon(isSelected ? tab.activeIcon : tab.icon, color: color),
-
                 const SizedBox(height: AppSpacing.xs),
-
                 Text(
                   tab.label,
-
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: color,
-
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                   ),
                 ),

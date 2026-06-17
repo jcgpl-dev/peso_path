@@ -9,6 +9,7 @@ import '../../domain/usecases/register_user.dart';
 import '../../domain/usecases/logout_user.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
+import '../../data/datasources/auth_local_datasource.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final RegisterUser registerUser;
@@ -16,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LogoutUser logoutUser;
   final UpdateProfilePic _updateProfilePic;
   final CurrentUser currentUser;
+  final AuthLocalDataSource authLocalDataSource;
 
   AuthBloc({
     required this.registerUser,
@@ -23,12 +25,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.logoutUser,
     required UpdateProfilePic updateProfilePic,
     required this.currentUser,
+    required this.authLocalDataSource,
   }) : _updateProfilePic = updateProfilePic,
        super(AuthInitial()) {
     on<RegisterRequested>(_onRegisterRequested);
     on<LoginRequested>(_onLoginRequested);
     on<LogoutRequested>(_onLogoutRequested);
     on<UploadProfilePictureRequested>(_onUploadProfilePicture);
+    on<RestoreSessionRequested>(_onRestoreSession);
   }
 
   Future<void> _onUploadProfilePicture(
@@ -61,6 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       await logoutUser();
+      await authLocalDataSource.clearUserSession();
       currentUser.setUser('');
       emit(AuthInitial());
     } catch (e) {
@@ -96,17 +101,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     emit(AuthLoading());
-
     try {
       final user = await loginUser(event.username, event.password);
-
       if (user == null) {
         emit(const AuthFailure('Invalid username or password'));
         return;
       }
 
-      currentUser.setUser(user.id);
+      if (event.keepLoggedIn) {
+        await authLocalDataSource.saveUserSession(user.id);
+      }
 
+      currentUser.setUser(user.id);
       emit(
         AuthAuthenticated(
           userId: user.id,
@@ -115,6 +121,37 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           profilePicture: user.profilePicture,
         ),
       );
+    } catch (e) {
+      emit(AuthFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onRestoreSession(
+    RestoreSessionRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final userId = await authLocalDataSource.getStoredUserId();
+      if (userId != null && userId.isNotEmpty) {
+        final user = await authLocalDataSource.getUserById(userId);
+
+        if (user != null) {
+          currentUser.setUser(user.id);
+          emit(
+            AuthAuthenticated(
+              userId: user.id,
+              name: user.name,
+              username: user.username,
+              profilePicture: user.profilePicture,
+            ),
+          );
+        } else {
+          emit(AuthInitial());
+        }
+      } else {
+        emit(AuthInitial());
+      }
     } catch (e) {
       emit(AuthFailure(e.toString()));
     }

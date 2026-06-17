@@ -162,7 +162,7 @@ class _SavingsPageState extends State<SavingsPage> {
       appBar: AppBar(
         title: Text(
           'Savings Goals',
-          style: theme.textTheme.headlineMedium?.copyWith(
+          style: theme.textTheme.headlineLarge?.copyWith(
             fontWeight: FontWeight.bold,
           ),
         ),

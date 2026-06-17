@@ -21,6 +21,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
+  bool _keepLoggedIn = false;
 
   @override
   void dispose() {
@@ -75,6 +76,16 @@ class _LoginPageState extends State<LoginPage> {
                   label: 'Password',
                   isPassword: true,
                 ),
+                const SizedBox(height: AppSpacing.md),
+                CheckboxListTile(
+                  title: const Text("Keep me logged in"),
+                  value: _keepLoggedIn,
+
+                  onChanged: (value) =>
+                      setState(() => _keepLoggedIn = value ?? false),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                ),
                 const SizedBox(height: AppSpacing.lg),
                 PrimaryButton(
                   text: 'Login',
@@ -84,6 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                       LoginRequested(
                         username: usernameController.text.trim(),
                         password: passwordController.text.trim(),
+                        keepLoggedIn: _keepLoggedIn,
                       ),
                     );
                   },

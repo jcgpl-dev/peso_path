@@ -10,8 +10,13 @@ abstract class AuthEvent extends Equatable {
 class LoginRequested extends AuthEvent {
   final String username;
   final String password;
+  final bool keepLoggedIn;
 
-  const LoginRequested({required this.username, required this.password});
+  const LoginRequested({
+    required this.username,
+    required this.password,
+    this.keepLoggedIn = false,
+  });
 
   @override
   List<Object?> get props => [username, password];
@@ -43,3 +48,5 @@ class UploadProfilePictureRequested extends AuthEvent {
     required this.imagePath,
   });
 }
+
+class RestoreSessionRequested extends AuthEvent {}
