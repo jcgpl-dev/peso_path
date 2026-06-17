@@ -20,6 +20,8 @@ class SavingsBloc extends Bloc<SavingsEvent, SavingsState> {
     on<LoadSavingsGoals>(_onLoadSavingsGoals);
     on<CreateGoalRequested>(_onCreateGoalRequested);
     on<FundGoalRequested>(_onFundGoalRequested);
+    on<DeleteGoalRequested>(_onDeleteGoalRequested);
+    on<UpdateGoalRequested>(_onUpdateGoalRequested);
   }
 
   Future<void> _onLoadSavingsGoals(
@@ -62,6 +64,32 @@ class SavingsBloc extends Bloc<SavingsEvent, SavingsState> {
   ) async {
     try {
       await addFundsToGoal(event.goalId, event.amount);
+      emit(SavingsOperationSuccess());
+      add(LoadSavingsGoals());
+    } catch (e) {
+      emit(SavingsError(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteGoalRequested(
+    DeleteGoalRequested event,
+    Emitter<SavingsState> emit,
+  ) async {
+    try {
+      await localDataSource.deleteSavingsGoal(event.goalId);
+      emit(SavingsOperationSuccess());
+      add(LoadSavingsGoals());
+    } catch (e) {
+      emit(SavingsError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateGoalRequested(
+    UpdateGoalRequested event,
+    Emitter<SavingsState> emit,
+  ) async {
+    try {
+      await localDataSource.updateSavingsGoal(event.goal);
       emit(SavingsOperationSuccess());
       add(LoadSavingsGoals());
     } catch (e) {

@@ -8,10 +8,14 @@ class SavingsGoalCard extends StatelessWidget {
     super.key,
     required this.goal,
     required this.onAddFunds,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   final SavingsGoal goal;
   final VoidCallback onAddFunds;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +54,20 @@ class SavingsGoalCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'edit') onEdit();
+                  if (value == 'delete') onDelete();
+                },
+                itemBuilder: (context) => [
+                  const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                  const PopupMenuItem(
+                    value: 'delete',
+                    child: Text('Delete', style: TextStyle(color: Colors.red)),
+                  ),
+                ],
               ),
               const SizedBox(width: AppSpacing.sm),
               IconButton(

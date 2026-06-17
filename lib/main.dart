@@ -6,6 +6,9 @@ import 'package:peso_path/features/budget/presentation/bloc/budget_bloc.dart';
 import 'package:peso_path/features/dashboard/presentation/bloc/dashboard_bloc.dart';
 import 'package:peso_path/features/savings/presentation/bloc/savings_bloc.dart';
 import 'package:peso_path/features/savings/presentation/bloc/savings_event.dart';
+import 'package:peso_path/features/savings/presentation/bloc/savings_state.dart';
+import 'package:peso_path/features/transactions/presentation/bloc/transaction_bloc.dart';
+import 'package:peso_path/features/transactions/presentation/bloc/transaction_event.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'core/router/app_router.dart';
@@ -35,6 +38,14 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<SavingsBloc>(
           create: (context) => sl<SavingsBloc>()..add(LoadSavingsGoals()),
+        ),
+
+        BlocListener<SavingsBloc, SavingsState>(
+          listener: (context, state) {
+            if (state is SavingsOperationSuccess) {
+              context.read<TransactionBloc>().add(LoadTransactions());
+            }
+          },
         ),
         BlocProvider<AuthBloc>(create: (_) => sl<AuthBloc>()),
 

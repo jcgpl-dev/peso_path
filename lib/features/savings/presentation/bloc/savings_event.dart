@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:peso_path/features/savings/domain/entities/savings_goal.dart';
 
 abstract class SavingsEvent extends Equatable {
   const SavingsEvent();
@@ -18,4 +19,14 @@ class FundGoalRequested extends SavingsEvent {
   final String goalId;
   final double amount;
   const FundGoalRequested(this.goalId, this.amount);
+}
+
+class DeleteGoalRequested extends SavingsEvent {
+  final String goalId;
+  const DeleteGoalRequested(this.goalId);
+}
+
+class UpdateGoalRequested extends SavingsEvent {
+  final SavingsGoal goal;
+  const UpdateGoalRequested(this.goal);
 }

@@ -18,4 +18,12 @@ class SavingsRepositoryImpl implements SavingsRepository {
   @override
   Future<void> addFundsToGoal(String goalId, double amount) =>
       localDataSource.addFundsToGoal(goalId, amount);
+
+  @override
+  Future<void> deleteSavingsGoal(String goalId) =>
+      localDataSource.deleteSavingsGoal(goalId);
+
+  @override
+  Future<void> updateSavingsGoal(SavingsGoal goal) =>
+      localDataSource.updateSavingsGoal(goal);
 }

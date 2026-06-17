@@ -100,4 +100,19 @@ class SavingsLocalDataSource {
       );
     });
   }
+
+  Future<void> deleteSavingsGoal(String goalId) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.delete('savings_goals', where: 'id = ?', whereArgs: [goalId]);
+  }
+
+  Future<void> updateSavingsGoal(SavingsGoal goal) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.update(
+      'savings_goals',
+      {'title': goal.title, 'target_amount': goal.targetAmount},
+      where: 'id = ?',
+      whereArgs: [goal.id],
+    );
+  }
 }
