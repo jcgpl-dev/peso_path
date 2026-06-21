@@ -94,7 +94,7 @@ class DeveloperPage extends StatelessWidget {
                       size: 20,
                       color: AppColors.primary,
                     ),
-                    title: 'Email',
+
                     value: 'gapoljesie23@gmail.com',
                     onTap: () =>
                         _launchURL(context, 'mailto:gapoljesie23@gmail.com'),
@@ -107,7 +107,7 @@ class DeveloperPage extends StatelessWidget {
                       size: 20,
                       color: AppColors.primary,
                     ),
-                    title: 'GitHub',
+
                     value: 'github.com/jcgpl-dev',
                     onTap: () =>
                         _launchURL(context, 'https://github.com/jcgpl-dev'),
@@ -120,7 +120,7 @@ class DeveloperPage extends StatelessWidget {
                       size: 20,
                       color: AppColors.primary,
                     ),
-                    title: 'Facebook',
+
                     value: 'facebook.com/jesieperasgapol',
                     onTap: () => _launchURL(
                       context,
@@ -135,7 +135,7 @@ class DeveloperPage extends StatelessWidget {
                       size: 20,
                       color: AppColors.primary,
                     ),
-                    title: 'Portfolio',
+
                     value: 'jcgpl-dev.github.io',
                     onTap: () =>
                         _launchURL(context, 'https://jcgpl-dev.github.io'),
@@ -172,6 +172,7 @@ class DeveloperPage extends StatelessWidget {
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: AppColors.primary,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
@@ -184,7 +185,7 @@ class DeveloperPage extends StatelessWidget {
   Widget _buildContactRow(
     BuildContext context, {
     required Widget iconWidget, // Accept any Widget (Icon or FaIcon) directly
-    required String title,
+
     required String value,
     required VoidCallback onTap,
   }) {
@@ -205,24 +206,13 @@ class DeveloperPage extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.md),
             Text(
-              title,
+              value,
               style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const Spacer(),
-            Expanded(
-              child: Text(
-                value,
-                textAlign: TextAlign.end,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.primary,
-                  decoration: TextDecoration.underline,
-                ),
-              ),
-            ),
-            const SizedBox(width: AppSpacing.xs),
+
             Icon(
               Icons.arrow_forward_ios_rounded,
               size: 12,

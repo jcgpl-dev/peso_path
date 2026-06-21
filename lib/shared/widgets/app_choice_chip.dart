@@ -31,7 +31,7 @@ class AppChoiceChip extends StatelessWidget {
         : AppColors.lightBorder;
 
     return ChoiceChip(
-      label: Text(label),
+      label: Text(label, overflow: TextOverflow.ellipsis),
       selected: isSelected,
       checkmarkColor: Colors.white,
       onSelected: onSelected,

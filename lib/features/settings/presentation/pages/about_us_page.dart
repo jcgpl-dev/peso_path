@@ -64,68 +64,34 @@ class AboutUsPage extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              'Peso Path is built to simplify local currency asset and expense tracking. Our goal is to empower users to map out their micro-budget cycles, hit concrete savings targets, and cultivate a healthy overview of their financial habits without complicated global setups.',
+              'Peso Path is designed to make tracking your daily expenses and savings straightforward. We believe managing your money shouldn\'t require dealing with complicated multi-currency settings or confusing financial jargon. Our app gives you a clear, honest view of your spending habits so you can reach your financial goals with confidence.',
               style: theme.textTheme.bodyLarge,
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
-              'Key System Modules',
+              'Key Features',
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.md),
             _buildFeatureRow(
               context,
-              Icons.pie_chart_outline,
-              'Smart Budget Optimization',
-              'Set and monitor active milestone caps dynamically.',
+
+              'Simple Budgeting',
+              'Set limits for your spending categories and track your allowance visually.',
             ),
             _buildFeatureRow(
               context,
-              Icons.trending_up_rounded,
-              'Savings Goal Pipeline',
-              'Funnel fluid allocations straight into tracked targets.',
+
+              'Savings Goals',
+              'Create targets for things you want and watch your progress grow over time.',
             ),
             _buildFeatureRow(
               context,
-              Icons.security_outlined,
-              'Localized Device Sandbox',
-              'Your transactional ledger entries remain 100% offline.',
-            ),
-            const SizedBox(height: AppSpacing.xl),
-            Card(
-              elevation: 0,
-              color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Row(
-                  children: [
-                    const Icon(Icons.code_rounded, color: AppColors.primary),
-                    const SizedBox(width: AppSpacing.md),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Developer Team',
-                            style: theme.textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'Designed & Maintained by Jesie Gapol.',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+              'Complete Privacy',
+              'Your financial data stays right on your phone. No tracking, no cloud syncing.',
             ),
           ],
         ),
@@ -135,7 +101,7 @@ class AboutUsPage extends StatelessWidget {
 
   Widget _buildFeatureRow(
     BuildContext context,
-    IconData icon,
+
     String title,
     String description,
   ) {
@@ -145,8 +111,6 @@ class AboutUsPage extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primary, size: 24),
-          const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

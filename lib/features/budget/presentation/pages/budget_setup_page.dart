@@ -152,27 +152,30 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  Row(
-                    children: ['This Month', 'Next Month', 'Custom'].map((
-                      preset,
-                    ) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: AppSpacing.xs),
-                        child: AppChoiceChip(
-                          label: preset,
-                          isSelected: _selectedPreset == preset,
-                          onSelected: (selected) {
-                            if (selected) {
-                              if (preset == 'Custom') {
-                                setState(() => _selectedPreset = 'Custom');
-                              } else {
-                                _applyPreset(preset);
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: ['This Month', 'Next Month', 'Custom'].map((
+                        preset,
+                      ) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: AppSpacing.xs),
+                          child: AppChoiceChip(
+                            label: preset,
+                            isSelected: _selectedPreset == preset,
+                            onSelected: (selected) {
+                              if (selected) {
+                                if (preset == 'Custom') {
+                                  setState(() => _selectedPreset = 'Custom');
+                                } else {
+                                  _applyPreset(preset);
+                                }
                               }
-                            }
-                          },
-                        ),
-                      );
-                    }).toList(),
+                            },
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
 
