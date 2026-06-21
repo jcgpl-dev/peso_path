@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:peso_path/core/theme/app_radius.dart';
 import 'package:peso_path/features/auth/presentation/bloc/auth_event.dart';
 import 'package:peso_path/shared/widgets/app_confirmation_dialog.dart';
 import 'package:peso_path/shared/widgets/app_snackbar.dart';
@@ -84,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
             onPressed: () {
-              context.go('/dashboard');
+              context.pop('/dashboard');
             },
           ),
         ),

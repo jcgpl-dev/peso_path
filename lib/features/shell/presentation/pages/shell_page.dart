@@ -82,7 +82,6 @@ class ShellPage extends StatelessWidget {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: BottomAppBar(
-              
               clipBehavior: Clip.antiAlias,
               // Smooth transition: remove the notch cutout when FAB is absent
               shape: showFab ? const CircularNotchedRectangle() : null,

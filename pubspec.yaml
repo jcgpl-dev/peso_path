@@ -1,5 +1,6 @@
 name: peso_path
 description: PesoPath - budgeting app."
+version: 1.0.1+2
 
 environment:
   sdk: ^3.10.7

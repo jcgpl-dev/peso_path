@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:peso_path/core/theme/app_spacing.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
-import '../../../../shared/widgets/app_choice_chip.dart'; // Reusing your project chip component
+import '../../../../shared/widgets/app_choice_chip.dart';
 import '../bloc/budget_bloc.dart';
 import '../bloc/budget_event.dart';
 import '../bloc/budget_state.dart';
@@ -27,7 +27,7 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
   @override
   void initState() {
     super.initState();
-    _applyPreset('This Month'); // Standard smart initialization fallback
+    _applyPreset('Next 30 Days');
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BudgetBloc>().add(LoadActiveBudgetCycle());
@@ -61,20 +61,18 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
           now.month + 1,
           1,
         ).subtract(const Duration(days: 1));
-      } else if (preset == 'Next Month') {
-        startDate = DateTime(now.year, now.month + 1, 1);
-        endDate = DateTime(
-          now.year,
-          now.month + 2,
-          1,
-        ).subtract(const Duration(days: 1));
+      } else if (preset == 'Next 30 Days') {
+        startDate = DateTime(now.year, now.month, now.day);
+
+        endDate = DateTime(now.year, now.month + 1, now.day);
       }
     });
   }
 
   void _submitForm() {
-    if (amountController.text.isEmpty || startDate == null || endDate == null)
+    if (amountController.text.isEmpty || startDate == null || endDate == null) {
       return;
+    }
 
     final amount = double.tryParse(amountController.text) ?? 0.0;
     if (amount <= 0) return;
@@ -142,7 +140,6 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                   ),
                   const SizedBox(height: AppSpacing.md),
 
-                  // Quick Timeline Presets Bar
                   Text(
                     'Quick Duration Presets',
                     style: TextStyle(
@@ -155,7 +152,8 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: ['This Month', 'Next Month', 'Custom'].map((
+                      // Swapped 'Next Month' string directly here for 'Next 30 Days'
+                      children: ['This Month', 'Next 30 Days', 'Custom'].map((
                         preset,
                       ) {
                         return Padding(
@@ -179,7 +177,6 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                   ),
                   const SizedBox(height: AppSpacing.md),
 
-                  // Date Selectors Grouped Card
                   Card(
                     elevation: 0,
                     margin: EdgeInsets.zero,
@@ -219,7 +216,6 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                               setState(() {
                                 startDate = picked;
                                 _selectedPreset = 'Custom';
-                                // Intelligent forward alignment rule
                                 if (endDate == null ||
                                     endDate!.isBefore(picked)) {
                                   endDate = DateTime(

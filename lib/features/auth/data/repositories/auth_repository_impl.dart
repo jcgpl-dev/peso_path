@@ -47,4 +47,27 @@ class AuthRepositoryImpl implements AuthRepository {
       whereArgs: [userId],
     );
   }
+
+  @override
+  Future<void> setActiveAccount(String userId) async {
+    await localDataSource.saveUserSession(userId);
+  }
+
+  @override
+  Future<List<User>> getAllStoredAccounts() async {
+    final List<UserModel> models = await localDataSource.getAllUsers();
+
+    return models
+        .map(
+          (m) => User(
+            id: m.id,
+            name: m.name,
+            username: m.username,
+            password: m.password,
+            createdAt: m.createdAt,
+            profilePicture: m.profilePicture,
+          ),
+        )
+        .toList();
+  }
 }

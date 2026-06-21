@@ -42,7 +42,8 @@ class _AppTextFieldState extends State<AppTextField> {
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       obscureText: _obscureText,
-      textInputAction: widget.textInputAction, // Wired up to input widget
+      textInputAction: widget.textInputAction,
+      style: TextStyle(fontWeight: FontWeight.bold),
       decoration: InputDecoration(
         labelText: widget.label,
         prefixText: widget.prefixText,

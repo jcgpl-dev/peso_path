@@ -20,6 +20,8 @@ import '../features/auth/domain/usecases/logout_user.dart';
 import '../features/auth/domain/usecases/register_user.dart';
 import '../features/auth/domain/usecases/update_profile_pic.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
+import '../features/auth/domain/usecases/switch_account.dart';
+import '../features/auth/domain/usecases/get_all_accounts.dart';
 
 // Budget
 import 'package:peso_path/features/budget/data/datasources/budget_local_datasource.dart';
@@ -74,6 +76,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => LoginUser(sl<AuthRepository>()));
   sl.registerLazySingleton(() => LogoutUser(sl<AuthRepository>()));
   sl.registerLazySingleton(() => UpdateProfilePic(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => SwitchAccount(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => GetAllAccounts(sl<AuthRepository>()));
 
   // Auth Bloc
   sl.registerFactory(
@@ -84,6 +88,8 @@ Future<void> init() async {
       updateProfilePic: sl<UpdateProfilePic>(),
       currentUser: sl<CurrentUser>(),
       authLocalDataSource: sl<AuthLocalDataSource>(),
+      switchAccount: sl<SwitchAccount>(),
+      getAllAccounts: sl<GetAllAccounts>(),
     ),
   );
 

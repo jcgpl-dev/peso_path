@@ -50,3 +50,10 @@ class UploadProfilePictureRequested extends AuthEvent {
 }
 
 class RestoreSessionRequested extends AuthEvent {}
+
+class LoadAllAccountsRequested extends AuthEvent {}
+
+class SwitchAccountRequested extends AuthEvent {
+  final String userId;
+  const SwitchAccountRequested(this.userId);
+}

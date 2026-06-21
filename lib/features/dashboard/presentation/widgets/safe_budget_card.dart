@@ -56,10 +56,10 @@ class SafeBudgetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final todaySpent = _calculateTodaySpent();
 
-    // Custom dynamic message strings based on actual daily consumption behavior
+    // Concise, scannable microcopy
     final descriptionText = todaySpent > 0
-        ? 'You\'ve spent ₱${todaySpent.toStringAsFixed(2)} today. You have ₱${safeBudget.toStringAsFixed(2)} remaining to stay on track until ${_formatDate(endDate)}.'
-        : 'You haven\'t spent anything today! You have up to ₱${safeBudget.toStringAsFixed(2)} available to use and remain on track until ${_formatDate(endDate)}.';
+        ? 'Spent ₱${todaySpent.toStringAsFixed(2)} today. ₱${safeBudget.toStringAsFixed(2)} left to stay on track until ${_formatDate(endDate)}.'
+        : 'No spending recorded today. You have ₱${safeBudget.toStringAsFixed(2)} safe to spend until ${_formatDate(endDate)}.';
 
     return Container(
       width: double.infinity,
