@@ -18,6 +18,16 @@ class MonthlyOverviewCard extends StatelessWidget {
   final double totalSpent;
   final double remainingBudget;
 
+  Color _getStateColor(double percentage) {
+    if (percentage >= 0.90) {
+      return AppColors.expense;
+    } else if (percentage >= 0.70) {
+      return AppColors.warning;
+    } else {
+      return AppColors.income;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double percentage = budgetAmount > 0
@@ -27,6 +37,8 @@ class MonthlyOverviewCard extends StatelessWidget {
 
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final linkColor = isDarkMode ? AppColors.darkLink : AppColors.lightLink;
+
+    final Color stateColor = _getStateColor(percentage);
 
     return AppCard(
       child: Column(
@@ -71,8 +83,8 @@ class MonthlyOverviewCard extends StatelessWidget {
                     title: 'Budget',
                     value: budgetAmount,
                     icon: PhosphorIcons.wallet(PhosphorIconsStyle.bold),
-                    iconColor: const Color(0xFF10B981),
-                    valueColor: const Color(0xFF10B981),
+                    iconColor: AppColors.income,
+                    valueColor: AppColors.income,
                   ),
                 ),
                 VerticalDivider(
@@ -86,8 +98,8 @@ class MonthlyOverviewCard extends StatelessWidget {
                     title: 'Spent',
                     value: totalSpent,
                     icon: PhosphorIcons.arrowDown(PhosphorIconsStyle.bold),
-                    iconColor: const Color(0xFFEF4444), // Crimson Red
-                    valueColor: const Color(0xFFEF4444),
+                    iconColor: AppColors.expense,
+                    valueColor: AppColors.expense,
                   ),
                 ),
                 VerticalDivider(
@@ -101,8 +113,12 @@ class MonthlyOverviewCard extends StatelessWidget {
                     title: 'Remaining',
                     value: remainingBudget,
                     icon: PhosphorIcons.chartPieSlice(PhosphorIconsStyle.bold),
-                    iconColor: const Color(0xFF059669), // Rich Deep Green
-                    valueColor: const Color(0xFF059669),
+                    iconColor: remainingBudget < 0
+                        ? AppColors.expense
+                        : const Color(0xFF059669),
+                    valueColor: remainingBudget < 0
+                        ? AppColors.expense
+                        : const Color(0xFF059669),
                   ),
                 ),
               ],
@@ -127,7 +143,7 @@ class MonthlyOverviewCard extends StatelessWidget {
                 '${displayPercentage.toStringAsFixed(1)}%',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: const Color(0xFF10B981),
+                  color: stateColor, // Updated dynamically
                 ),
               ),
             ],
@@ -141,12 +157,12 @@ class MonthlyOverviewCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: percentage,
               minHeight: 8,
-              backgroundColor: const Color(
-                0xFFF1F5F9,
-              ), // Light background track
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                Color(0xFF10B981),
-              ),
+              backgroundColor: isDarkMode
+                  ? AppColors.darkBorder
+                  : const Color(0xFFF1F5F9),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                stateColor,
+              ), // Updated dynamically
             ),
           ),
 
@@ -156,7 +172,9 @@ class MonthlyOverviewCard extends StatelessWidget {
           Text(
             "You've spent ${displayPercentage.toStringAsFixed(1)}% of your budget",
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: const Color(0xFF64748B), // Slate Muted Gray text
+              color: isDarkMode
+                  ? AppColors.darkTextSecondary
+                  : AppColors.lightTextSecondary,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -186,7 +204,6 @@ class _MetricColumn extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Ring Base Wrapped Circular Icon Placements
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -195,9 +212,7 @@ class _MetricColumn extends StatelessWidget {
           ),
           child: Icon(icon, color: iconColor, size: 20),
         ),
-
         const SizedBox(height: AppSpacing.xs),
-
         Text(
           title,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -205,9 +220,7 @@ class _MetricColumn extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-
         const SizedBox(height: 4),
-
         Text(
           '₱${value.toStringAsFixed(2)}',
           maxLines: 1,

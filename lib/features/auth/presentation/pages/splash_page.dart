@@ -64,6 +64,7 @@ class _SplashPageState extends State<SplashPage> {
       },
       child: Scaffold(
         backgroundColor: AppColors.primary,
+        appBar: null,
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
