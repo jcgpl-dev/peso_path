@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:peso_path/features/budget/domain/entities/budget_cycle.dart';
 
 abstract class BudgetEvent extends Equatable {
   const BudgetEvent();

@@ -153,7 +153,7 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       // Swapped 'Next Month' string directly here for 'Next 30 Days'
-                      children: ['This Month', 'Next 30 Days', 'Custom'].map((
+                      children: ['Next 30 Days', 'This Month', 'Custom'].map((
                         preset,
                       ) {
                         return Padding(
