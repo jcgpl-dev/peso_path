@@ -36,17 +36,24 @@ class SafeBudgetCard extends StatelessWidget {
 
   double _calculateTodaySpent() {
     final now = DateTime.now();
-    final todayStr =
-        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
-
     double total = 0.0;
+
     for (final tx in transactions) {
-      if (tx.transactionDate.startsWith(todayStr)) {
-        if (tx.type.toLowerCase() == 'expense' ||
-            tx.type.toLowerCase() == 'debit' ||
-            tx.amount < 0) {
-          total += tx.amount.abs();
+      try {
+        final txDate = DateTime.parse(tx.transactionDate);
+
+        final isToday =
+            txDate.year == now.year &&
+            txDate.month == now.month &&
+            txDate.day == now.day;
+
+        if (isToday) {
+          if (tx.type.toLowerCase() != 'income') {
+            total += tx.amount.abs();
+          }
         }
+      } catch (_) {
+        continue;
       }
     }
     return total;
@@ -56,7 +63,6 @@ class SafeBudgetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final todaySpent = _calculateTodaySpent();
 
-    // Concise, scannable microcopy
     final descriptionText = todaySpent > 0
         ? 'Spent ₱${todaySpent.toStringAsFixed(2)} today. ₱${safeBudget.toStringAsFixed(2)} left to stay on track until ${_formatDate(endDate)}.'
         : 'No spending recorded today. You have ₱${safeBudget.toStringAsFixed(2)} safe to spend until ${_formatDate(endDate)}.';

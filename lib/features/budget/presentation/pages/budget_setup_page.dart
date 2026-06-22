@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:peso_path/core/theme/app_spacing.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../shared/widgets/app_text_field.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../../shared/widgets/app_choice_chip.dart';
@@ -188,7 +189,7 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                       children: [
                         ListTile(
                           leading: Icon(
-                            Icons.date_range_rounded,
+                            PhosphorIcons.calendarPlus(PhosphorIconsStyle.bold),
                             color: colorScheme.primary,
                           ),
                           title: const Text(
@@ -235,7 +236,9 @@ class _BudgetSetupPageState extends State<BudgetSetupPage> {
                         ),
                         ListTile(
                           leading: Icon(
-                            Icons.flag_rounded,
+                            PhosphorIcons.calendarMinus(
+                              PhosphorIconsStyle.bold,
+                            ),
                             color: colorScheme.error,
                           ),
                           title: const Text(

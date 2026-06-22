@@ -15,6 +15,7 @@ import 'package:peso_path/features/settings/presentation/bloc/theme_cubit.dart';
 import 'package:peso_path/features/settings/presentation/widgets/settings_tile.dart';
 import 'package:peso_path/shared/widgets/app_confirmation_dialog.dart';
 import 'package:peso_path/shared/widgets/app_snackbar.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -67,14 +68,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       SettingsTile(
-                        icon: Icons.person_outline,
+                        icon: PhosphorIcons.userCircle(PhosphorIconsStyle.bold),
                         title: 'Profile Details',
                         subtitle:
                             'Logged in as: ${authState.name} (@${authState.username})',
                         onTap: () => context.push('/profile'),
                       ),
                       SettingsTile(
-                        icon: Icons.switch_account_outlined,
+                        icon: PhosphorIcons.arrowsLeftRight(
+                          PhosphorIconsStyle.bold,
+                        ),
                         title: 'Switch Profile',
                         subtitle: 'Swap active local storage namespace',
                         onTap: () =>
@@ -84,7 +87,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   );
                 }
                 return SettingsTile(
-                  icon: Icons.person_outline,
+                  icon: PhosphorIcons.userCircle(PhosphorIconsStyle.bold),
                   title: 'Profile Details',
                   subtitle: 'Update your display profile',
                   onTap: () => context.push('/profile'),
@@ -93,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
 
             SettingsTile(
-              icon: Icons.logout,
+              icon: PhosphorIcons.power(PhosphorIconsStyle.bold),
               title: 'Sign Out',
               subtitle: 'Log out of your account securely',
               iconColor: AppColors.expense,
@@ -103,7 +106,9 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: AppSpacing.lg),
             _buildSectionHeader('Preferences'),
             SettingsTile(
-              icon: isDark ? Icons.dark_mode : Icons.light_mode,
+              icon: isDark
+                  ? PhosphorIcons.moonStars(PhosphorIconsStyle.bold)
+                  : PhosphorIcons.sun(PhosphorIconsStyle.bold),
               title: 'Theme Mode',
               subtitle: isDark ? 'Dark Mode Active' : 'Light Mode Active',
               trailing: Switch(
@@ -131,7 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ),
             SettingsTile(
-              icon: Icons.refresh_rounded,
+              icon: PhosphorIcons.repeat(PhosphorIconsStyle.bold),
               title: 'Manage Budget Cycles',
               subtitle: 'Setup or reset budget milestones',
               onTap: () => context.push('/budget-setup'),
@@ -140,13 +145,13 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: AppSpacing.lg),
             _buildSectionHeader('App Info'),
             SettingsTile(
-              icon: Icons.info_outline_rounded,
+              icon: PhosphorIcons.info(PhosphorIconsStyle.bold),
               title: 'About Peso Path',
               subtitle: 'Learn more about our finance mission',
               onTap: () => context.push('/about'),
             ),
             SettingsTile(
-              icon: Icons.code_rounded,
+              icon: PhosphorIcons.code(PhosphorIconsStyle.bold),
               title: 'Developer Details',
               subtitle: 'Meet the developer behind the app',
               onTap: () => context.push('/developer'),
@@ -155,7 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
             const SizedBox(height: AppSpacing.lg),
             _buildSectionHeader('Data Management'),
             SettingsTile(
-              icon: Icons.delete_forever_outlined,
+              icon: PhosphorIcons.trash(PhosphorIconsStyle.bold),
               title: 'Reset All Data',
               subtitle: 'Wipe all records permanently',
               iconColor: AppColors.expense,
